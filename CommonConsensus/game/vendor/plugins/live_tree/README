@@ -1,6 +1,0 @@
-LiveTree
-========
-
-LiveTree implements a JavaScript/DHTML tree (hierarchical list) widget that loads data asynchronously as-needed (using AJAX). This makes it ideal for cases where the dataset is too large to load to the browser all at once. Data can be provided in the HTML page as well, in which case no asynchronous loading is needed, making this widget suitable for standalone client-side use.
-
-See `doc/index.html` for LiveTree documentation.
