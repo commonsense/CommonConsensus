@@ -1,0 +1,101 @@
+
+<%   @game_questions = ["Why would you want to:",
+"What is something you can do if you wanted to:",
+"In what situations would you not want to",
+"List some things that could go wrong with:"] %>
+
+
+<p><p><p>
+   <%= $RAILS_EVN  %>
+    <table border=0 cellpading=0 cellspacing=0 width="100%" style="font-family: verdana,arial; color: #bbbbbb;">
+    <tr>
+    	<td width="42%" valign="top">
+		
+		<table border="0" cellpadding="5" bgcolor="white" width="100%">
+			<tr>
+				<!-- Question Display -->
+				<td valign="middle" align="center" style="border:1px solid #bbbbbb;" height="250">
+				<p> 
+	           		<h3><%= @game_questions[@gametype] %><br> 
+	           				<font size="+2" color="#000000">
+	           				<% if @gametype < 3 -%>
+								<%= @goal.name -%>?
+							<% else -%>
+								<% head = @goal.name.split[0] -%>
+	          					<% newhead = present_part(head) -%>
+	          					<%= newhead%> <%= @goal.name.gsub(head,"") -%>?
+	           				<% end -%>
+	       				 	</font>
+	       			</h3>
+	            <p>
+	            </td>
+	         </tr>
+	     </table>
+	    
+	   <td width="5%">&nbsp;</td>
+	   <td width="40%">
+	   <table border="0" cellpadding="5" bgcolor="white" width="100%" height="250">
+			<tr>
+				<!-- Question Display -->
+				<td valign="middle" align="center" style="border:1px solid #bbbbbb;">
+				<p><h3><font color="#bbbbbb">Total Score</font><br>
+					<font size="+3" color="#FF9834">
+						<% me = User.find(session[:user].id) %>
+						<%= me.score %>
+					</font>
+				</h3>
+				<p>
+				</td>
+			</tr>
+		</table>
+		</td>	
+		<td width="13%">&nbsp;</td>     
+	    </tr></table> 
+   
+   <p><p>
+    <% i = 1%>
+    <% points = 0 %>
+    
+    <table width="100%" border=0 cellpadding="5" cellspacing="0" style="font-size: normal; font-weight: normal; font-family: georgia,verdana,arial; color: #bbbbbb;">
+    <% oe = 0 %>    
+
+    <% for ans in @answers %>
+    <tr>
+		<td colspan="3"><div class="Line" /></td></td>&nbsp;</td>
+	</tr>
+	<tr height="20">
+        <td style="color: #aaaaaa;"> <%= ans['count'] %> </td>
+        <td style="color: #000000;"> <B> <%= ans['question'] %> </B></td>
+        <td style="color: #bbbbbb;"> 
+        <I>
+        	<% it = 1 %>
+    		<% for q in ans['strings'] %>
+    			<%= q %><% if it > 3 %>...<% break %><% elsif it < ans['strings'].size %>, <% end %> <% it+=1%>  
+    		<% end %>
+	    </I>
+	    </td>
+		<td width="13%" style="color: #FF9834;"> <% if ans['users'].include?(session[:user].id) %>
+				<font size="+2">+ <%= ans['score'] %> <% points+= ans['score'] %></font>
+				<%if ans['score'] > 0 %> earned!<% end %>
+    		  <% end %>
+        </td>
+          <% oe = 1-oe %>   
+  
+    </tr>
+    <% end %>
+    <tr>
+		<td colspan="3"><div class="Line" /></td><td>&nbsp;</td>
+	</tr>
+    </table>
+
+<br>    
+  <% if points > 0 %>
+      <font color="#C00000"><b><h2>+ <%= points %> earned!</b></h2></font>
+   <%else %>
+    Sorry, no points this round.  Please try again.<br>
+	<% end %>
+
+   <p><p>
+<i><span style="font-size: small; font-family: verdana,arial; color: #aaaaaa;"><b><span id="ChangeMe"><%= @next %></span></b> seconds before next game &gt;&gt;</span>
+
+    

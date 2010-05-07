@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:cpv="commonconsensus.validators.*"
+    width="100%" height="100%" label="Create Account">
+<mx:Metadata>
+    [Event(name="accountCreate",
+           type="commonconsensus.events.AccountCreateEvent")]
+</mx:Metadata>
+<mx:Script>
+<![CDATA[
+    import mx.controls.Alert;
+    import mx.events.ValidationResultEvent;
+    import mx.rpc.events.ResultEvent;
+    import mx.validators.Validator;
+    import commonconsensus.events.AccountCreateEvent;
+    import commonconsensus.validators.ServerErrors;
+	import commonconsensus.util.Settings;
+    import com.adobe.serialization.json.JSON;
+	
+    [Bindable]
+    private var _serverErrors:ServerErrors; //used in the form validation
+
+    private function handleAccountCreateResult(
+    event:ResultEvent):void {
+        CommonConsensus.debug(
+            "AccountCreateBox#handleAccountCreateResult");
+        if (event.result.toString() == "error") {
+		
+            Alert.show("Your account was not created.",
+                "Error");
+        } else {
+			CommonConsensus.debug("here");
+			CommonConsensus.debug(event.result.toString());
+            //CommonConsensus.debug(result.toString());
+            /*if (resultXML.name().localName == "errors") {
+                Alert.show(
+                    "Please correct the validation errors " +
+                    "highlighted on the form.",
+                    "Account Not Created");
+                _serverErrors = new ServerErrors(resultXML);
+			*/
+ 			
+               dispatchEvent(new AccountCreateEvent(event.result.toString()));
+      
+       }
+    }
+
+    private function validateAndSubmit():void {
+        var results:Array = Validator.validateAll([
+            usernameValidator,
+            emailValidator,
+            passwordValidator,
+            passwordConfirmationValidator]);
+        if (results.length > 0) {
+            Alert.show("Please correct the validation errors " +
+                "highlighted on the form.",
+                "Account Not Created");
+            return;
+        }
+
+		svcAccountCreate.send({login: loginTI.text, 
+			email: emailTI.text,
+			first_name: firstNameTI.text,
+			last_name: lastNameTI.text,
+			password: passwordTI.text});
+	
+    }
+    
+    private function showTOS():void {
+        Alert.show("I will care myself and other fellow mutants.");
+    }    
+]]>
+</mx:Script>
+    <mx:HTTPService
+        id="svcAccountCreate" resultFormat="object"
+        url="{Settings.BASE_URL}/flexserver/users/"
+        method="POST"
+        result="handleAccountCreateResult(event)"/>
+    <mx:EmailValidator id="emailValidator" source="{emailTI}"
+        property="text"/>
+    <mx:StringValidator
+        id="usernameValidator"
+        source="{loginTI}"
+        property="text"
+        required="true"
+        maxLength="80"/>
+    <mx:StringValidator
+        id="passwordValidator"
+        source="{passwordTI}"
+        property="text"
+        required="true"
+        minLength="4"
+        maxLength="40"/>
+    <cpv:PasswordConfirmationValidator 
+        id="passwordConfirmationValidator"
+        password="{passwordTI.text}"
+        source="{confirmPasswordTI}"
+        property="text"
+        required="true"/>
+    <cpv:ServerErrorValidator
+        id="loginSV"
+        field="login"
+        listener="{loginTI}"
+        serverErrors="{_serverErrors}"/>
+    <cpv:ServerErrorValidator
+        id="emailSV"
+        field="email"
+        listener="{emailTI}"
+        serverErrors="{_serverErrors}"/>
+    <cpv:ServerErrorValidator
+        id="passwordSV"
+        field="password"
+        listener="{passwordTI}"
+        serverErrors="{_serverErrors}"/>
+    <cpv:ServerErrorValidator
+        id="passwordConfirmationSV"
+        field="password_confirmation"
+        listener="{confirmPasswordTI}"
+        serverErrors="{_serverErrors}"/>
+    <mx:Form labelWidth="150">
+        <mx:FormItem required="true" label="Username">
+            <mx:TextInput id="loginTI"/>
+        </mx:FormItem>
+        <mx:FormItem required="true" label="Email Address">
+            <mx:TextInput id="emailTI"/>
+        </mx:FormItem>
+        <mx:FormItem label="First Name">
+            <mx:TextInput id="firstNameTI"/>
+        </mx:FormItem>
+        <mx:FormItem label="Last Name">
+            <mx:TextInput id="lastNameTI"/>
+        </mx:FormItem>
+        <mx:FormItem required="true" label="Password">
+            <mx:TextInput id="passwordTI"
+                displayAsPassword="true"/>
+        </mx:FormItem>
+        <mx:FormItem required="true" label="Confirm Password">
+            <mx:TextInput id="confirmPasswordTI"
+                displayAsPassword="true"/>
+        </mx:FormItem>
+        <mx:FormItem>
+            <mx:LinkButton label="Read Terms of Service"
+                click="showTOS()"/>
+        </mx:FormItem>
+        <mx:FormItem>
+            <mx:CheckBox id="tosCB"
+                label="I agree to the terms of service"/>
+        </mx:FormItem>
+        <mx:FormItem>
+            <mx:Button id="createAccountButton"
+                label="Create Account"
+                toolTip="{tosCB.selected ? '' : 'You must accept the terms of service.'}"
+                enabled="{tosCB.selected}"
+                click="validateAndSubmit()"/>
+        </mx:FormItem>
+    </mx:Form>
+</mx:VBox>

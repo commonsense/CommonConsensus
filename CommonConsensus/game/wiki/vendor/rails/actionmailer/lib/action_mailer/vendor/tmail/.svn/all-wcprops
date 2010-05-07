@@ -1,0 +1,137 @@
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail
+END
+mail.rb
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/mail.rb
+END
+base64.rb
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/base64.rb
+END
+port.rb
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/port.rb
+END
+address.rb
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/address.rb
+END
+quoting.rb
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/quoting.rb
+END
+net.rb
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/net.rb
+END
+header.rb
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/header.rb
+END
+scanner.rb
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/scanner.rb
+END
+info.rb
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/info.rb
+END
+mailbox.rb
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/mailbox.rb
+END
+parser.rb
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/parser.rb
+END
+encode.rb
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/encode.rb
+END
+stringio.rb
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/stringio.rb
+END
+utils.rb
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/utils.rb
+END
+facade.rb
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/facade.rb
+END
+mbox.rb
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/mbox.rb
+END
+config.rb
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/config.rb
+END
+loader.rb
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/loader.rb
+END
+tmail.rb
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/tmail.rb
+END
+scanner_r.rb
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/scanner_r.rb
+END
+attachments.rb
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/attachments.rb
+END
+obsolete.rb
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/lib/action_mailer/vendor/tmail/obsolete.rb
+END

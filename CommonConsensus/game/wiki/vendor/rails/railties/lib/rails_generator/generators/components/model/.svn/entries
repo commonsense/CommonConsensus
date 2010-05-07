@@ -1,0 +1,57 @@
+8
+
+dir
+517
+http://tools.assembla.com/svn/ICA/game/wiki/vendor/rails/railties/lib/rails_generator/generators/components/model
+http://tools.assembla.com/svn/ICA
+
+
+
+2007-07-05T20:23:12.814671Z
+360
+das
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+50a3e429-4e26-0410-b0d5-c43053f8e11c
+
+USAGE
+file
+
+
+
+
+2008-10-09T22:47:05.000000Z
+e9e77866e48cb741b489ecd1466bb99b
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+model_generator.rb
+file
+
+
+
+
+2008-10-09T22:47:05.000000Z
+ff67cd38c94388f163087e5f0787ae45
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+templates
+dir
+

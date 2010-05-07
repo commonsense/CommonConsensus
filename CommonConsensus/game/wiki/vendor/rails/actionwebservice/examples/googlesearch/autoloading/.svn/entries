@@ -1,0 +1,54 @@
+8
+
+dir
+517
+http://tools.assembla.com/svn/ICA/game/wiki/vendor/rails/actionwebservice/examples/googlesearch/autoloading
+http://tools.assembla.com/svn/ICA
+
+
+
+2007-07-05T20:23:12.814671Z
+360
+das
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+50a3e429-4e26-0410-b0d5-c43053f8e11c
+
+google_search_controller.rb
+file
+
+
+
+
+2008-10-09T22:47:02.000000Z
+ef469fa4c608764e34cbe9f457dd3eb2
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+google_search_api.rb
+file
+
+
+
+
+2008-10-09T22:47:02.000000Z
+19b60bbe4c1f2d3801b560ca6540334b
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+

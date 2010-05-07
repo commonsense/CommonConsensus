@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="100%"
+    height="100%" label="Login" creationComplete="loginTI.setFocus();">
+<mx:Metadata>
+    [Event(name="login", type="commonconsensus.events.LoginEvent")]
+</mx:Metadata>
+<mx:Script>
+<![CDATA[
+    import mx.controls.Alert;
+    import mx.rpc.events.ResultEvent;
+	import com.adobe.serialization.json.JSON;
+
+	import commonconsensus.events.LoginEvent;
+	import commonconsensus.util.Settings;
+
+
+    private function login():void {
+        svcAccountLogin.send(
+            {login: loginTI.text, password: passwordTI.text});
+    }
+
+    private function handleAccountLoginResult(
+    event:ResultEvent):void {
+        var result:Object = event.result;
+        if (result == "badlogin") {
+            Alert.show("The username or password is wrong.",
+                "Login Error");
+        } else {
+        	//var obj:Object = JSON.decode(result.toString()) as Object;
+			
+        	//CommonConsensus.debug(obj["game"]);
+            dispatchEvent(new LoginEvent(result.toString()));
+        }
+    }
+]]>
+</mx:Script>
+    <mx:HTTPService
+        id="svcAccountLogin"
+        url="{Settings.BASE_URL}/flexserver/login/"
+		resultFormat="e4x"
+        method="POST"
+        result="handleAccountLoginResult(event)"/>
+    <mx:Form labelWidth="150" defaultButton="{loginButton}" height="50%" width="60%" x="0" y="0">
+        <mx:FormItem required="true" label="Username">
+            <mx:TextInput id="loginTI" text="test"/>
+        </mx:FormItem>
+        <mx:FormItem required="true" label="Password">
+            <mx:TextInput id="passwordTI"
+                displayAsPassword="true" text="test"/>
+        </mx:FormItem>
+        <mx:FormItem>
+            <mx:Button id="loginButton" label="Login"
+                click="login()"/>
+        </mx:FormItem>
+    </mx:Form>
+</mx:VBox>

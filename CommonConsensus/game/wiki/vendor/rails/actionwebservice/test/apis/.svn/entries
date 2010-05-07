@@ -1,0 +1,54 @@
+8
+
+dir
+517
+http://tools.assembla.com/svn/ICA/game/wiki/vendor/rails/actionwebservice/test/apis
+http://tools.assembla.com/svn/ICA
+
+
+
+2007-07-05T20:23:12.814671Z
+360
+das
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+50a3e429-4e26-0410-b0d5-c43053f8e11c
+
+auto_load_api.rb
+file
+
+
+
+
+2008-10-09T22:47:01.000000Z
+ac560a676e964ca883ad5025b9949fb3
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+broken_auto_load_api.rb
+file
+
+
+
+
+2008-10-09T22:47:01.000000Z
+e1c06d85ae7b8b032bef47e42e4c08f9
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+

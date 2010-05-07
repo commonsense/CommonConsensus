@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/railties/lib/rails_generator/generators/components/model/templates
+END
+unit_test.rb
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/railties/lib/rails_generator/generators/components/model/templates/unit_test.rb
+END
+model.rb
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/railties/lib/rails_generator/generators/components/model/templates/model.rb
+END
+fixtures.yml
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/railties/lib/rails_generator/generators/components/model/templates/fixtures.yml
+END

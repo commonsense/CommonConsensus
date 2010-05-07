@@ -1,0 +1,185 @@
+/************************
+
+good site for design schemes
+
+http://www.returnofdesign.com/colors/
+
+*/
+
+
+
+body	{	
+	font-size:	1em;
+	font-weight:	normal;
+	word-spacing:	normal;
+	letter-spacing:	normal;
+	text-transform:	none;
+	font-family:  Verdana, Geneva, Arial, Helvetica, sans-serif;
+	font-size-adjust:	.48;
+	color:  #000000;
+	background:  #ddc;
+/*ffdd44;*/
+}
+p, blockquote, ul, ol, dl, dd, li, dir, menu	{	
+	/* inherit from body */	
+	}
+
+/* ##################### */
+
+ a:link { 	font-weight:	bold;
+	color: #008B26; 
+	 text-decoration: underline; } 
+a:visited { color: #008B26;  text-decoration: underline; }
+a:hover { color: #FFFFFF; text-decoration: none; background: #257; }
+a:active { color: #FFFFFF; text-decoration: none; background: #257; }
+
+
+#ErrorExplanation {
+  width: 400px;
+  border: 2px solid #ff;
+  padding: 7px;
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  background-color: #f0f0f0;
+}
+
+#ErrorExplanation h2 {
+  text-align: left;
+  font-weight: bold;
+  padding: 5px 5px 5px 15px;
+  font-size: 12px;
+  margin: -7px;
+  background-color: #c00;
+  color: #fff;
+}
+
+#ErrorExplanation p {
+  color: #333;
+  margin-bottom: 0;
+  padding: 5px;
+}
+
+#ErrorExplanation ul li {
+  font-size: 12px;
+  list-style: square;
+}
+
+#top {
+        font-family: Georgia, arial;
+	margin : 0px;
+        padding : 3px;
+	font-weight: normal;
+}
+/*990066*/
+#top h3 {
+	
+	font-size: 30px;
+	
+}
+/*- Menu Tabs--------------------------- */ 
+
+
+#tabs {
+        font-family: georgia;
+	float:top;
+	width:100%;
+	font-size:93%;
+	line-height:normal;
+}
+#tabs ul {
+	margin:0;
+	padding:10px 10px 0 50px;
+	list-style:none;
+}
+#tabs li {
+	display:inline;
+	margin:0;
+	padding:0;
+}
+#tabs a {
+	float:left;
+	background:url("http://epsilon.media.mit.edu:3000/tableft.gif") no-repeat left top;
+	margin:0;
+	padding:0 0 0 4px;
+	text-decoration:none;
+}
+#tabs a span {
+	float:left;
+	display:block;
+	background:url("http://epsilon.media.mit.edu:3000/tabright.gif") no-repeat right top;
+	padding:5px 15px 4px 6px;
+	color:#666;
+}
+/* Commented Backslash Hack hides rule from IE5-Mac \*/
+#tabs a span {float:none;}
+/* End IE5-Mac hack */
+#tabs a:hover span {
+	color:#FF9834;
+}
+#tabs a:hover {
+	background-position:0% -42px;
+}
+#tabs a:hover span {
+      background-position:100% -42px;
+}
+
+#links {
+	text-align : right;
+	margin-right: 50px;
+}
+#links a { color: #fff; }
+
+.ListLine0 {
+	background: #BBD9EE;
+	font-family: georgia;
+	color: #332;
+}
+.ListLine1 {
+	margin-left: 10px;
+	font-family: georgia;
+	color: #332;
+	
+}
+h3 {	  
+    font-family: georgia;
+	color: #008B26;
+	font-weight: normal;
+}
+h2 {
+ 	font-family: georgia;
+}
+#main { margin: 37px; 
+	 text-align: left;
+	 vertical-align: middle;
+<<<<<<< .mine
+	 padding: 20px; 
+=======
+	 padding: 25px; 
+>>>>>>> .r649
+	 width: 85%; 
+	 background-color: #ffffff; 
+	 border: 1px solid #bbbbbb;
+}
+
+#notice { background: #FFFBB3; 
+			text-align: left;
+			font-weight: bold;
+			border: 2px dotted #fff;
+			margin-top: 10px;
+			margin-left: 50px;
+			padding: 5px 5px 5px 15px;
+			width: 85%; }
+
+#footer { 
+        font-family: georgia;
+        text-align: center;
+	font-size: 12px;
+	color: #464646;
+}
+	
+#subtext { 
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+	
+}

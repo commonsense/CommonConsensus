@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/activesupport/test/dependencies
+END
+service_one.rb
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/activesupport/test/dependencies/service_one.rb
+END
+service_two.rb
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/activesupport/test/dependencies/service_two.rb
+END

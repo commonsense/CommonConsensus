@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: LiveTreeProtocol</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>LiveTreeProtocol</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>LiveTreeProtocol
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Thu Jan 19 09:48:22 Pacific Standard Time 2006</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1><a href="../classes/LiveTree.html">LiveTree</a> Protocol</h1>
+<table>
+<tr><td valign="top">Author:</td><td>Emanuel Borsboom (<a href="http://www.epiphyte.ca">www.epiphyte.ca</a>/)
+
+</td></tr>
+<tr><td valign="top">Copyright:</td><td>Copyright &#169; 2005-2006 Emanuel Borsboom
+
+</td></tr>
+<tr><td valign="top">License:</td><td>MIT (see <a href="LICENSE.html">LICENSE</a>)
+
+</td></tr>
+</table>
+<p>
+<b>Note:</b> This protocol may change in future alpha versions.
+</p>
+<h3>Request Format</h3>
+<p>
+A GET request is made to the specified <tt>dataUrl</tt> with the following
+query parameters:
+</p>
+<p>
+<b>Note:</b> In version 0.1, a POST request is used, but this has been
+changed for later versions.
+</p>
+<ul>
+<li><tt>item_id</tt> - ID of the item to get data for. If not specified, the
+root item should be returned.
+
+</li>
+<li><tt>depth</tt> - How deep to recurse down the tree. <tt>1</tt> means only
+get the item, <tt>2</tt> gets the item and its children, <tt>3</tt> gets
+the item, its children, and its children&#8217;s children, etc. If not
+specified, return the whole tree (i.e. recurse down to leaf nodes).
+
+</li>
+<li><tt>include_parents</tt> - If included and set to any value besides
+<tt>false</tt>, the item&#8217;s parents should be included with the
+result. The following parameter specifies how far up the tree to go:
+
+<ul>
+<li><tt>root_item_id</tt> - Only include parents up to this item.
+
+</li>
+</ul>
+</li>
+</ul>
+<p>
+All of the parameters are optional (if none are specified, the defaults
+mean the entire tree is returned). However, it is permissable for
+<tt>item_id</tt> and <tt>root_item_id</tt> to be required by the server (it
+may return a 500 status if missing), in which case the <a
+href="../classes/LiveTree.html">LiveTree</a> client must have either a
+<tt>rootItemId</tt> or <tt>initialData</tt> option.
+</p>
+<h3>Response Format</h3>
+<p>
+The data are returned in <a
+href="http://www.crockford.com/JSON/index.html">JSON</a> notation. It
+should consist of one object which has the following properties:
+</p>
+<ul>
+<li><tt>id</tt>: ID of the returned item (required).
+
+</li>
+<li><tt>name</tt>: Name of the returned item (required).
+
+</li>
+<li><tt>children</tt>: Array of children of this item (optional). This should
+only be included for items up to the depth requested, with one exception:
+it <em>must</em> be included if the item has no children. Each child is an
+object the same format as described here.
+
+</li>
+</ul>
+<p>
+If <tt>include_parents</tt> was specified in the query, the item returned
+is the item specified by <tt>root_item_id</tt> (or the root of the tree if
+not specified) and each item <em>up</em> <em>to</em> the one specified by
+<tt>item_id</tt> has only one level of children. Items below the one
+specifed by <tt>item_id</tt> have as many levels of children as specified
+by <tt>depth</tt>.
+</p>
+<p>
+If the item does not exist, return status 404.
+</p>
+<h3>Examples</h3>
+<p>
+The examples use the following tree structure:
+</p>
+<pre>
+        1: Root
+                10: Child 1
+                11: Child 2
+                        20: Child 2/Child 1
+                        21: Child 2/Child 2
+                                30: Child 2/Child2/Child 1
+                12: Child 3
+                        25: Child 3/Child 1
+</pre>
+<p>
+If the request has <tt>item_id</tt> = 11 and <tt>depth</tt> = 2, the
+following is returned:
+</p>
+<pre>
+        { id: 11, name: &quot;Child 2&quot;, children: [
+                { id: 20, name: &quot;Child 2/Child 1&quot;, children: [] },
+                { id: 21, name: &quot;Child 2/Child 1&quot; } ] }
+</pre>
+<p>
+If the request has <tt>item_id</tt> = 21, <tt>depth</tt> = 1, and
+<tt>include_parents</tt> = <tt>true</tt>:
+</p>
+<pre>
+        { id: 1, name: &quot;Root&quot;, children: [
+                { id: 10, name: &quot;Child 1&quot;, children: [] },
+                { id: 11, name: &quot;Child 2&quot;, children: [
+                        { id: 20, name: &quot;Child 2/Child 1&quot;, children: [] },
+                        { id: 21, name: &quot;Child 2/Child 2&quot; } ] },
+                { id: 12, name: &quot;Child 3&quot; } ] }
+</pre>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

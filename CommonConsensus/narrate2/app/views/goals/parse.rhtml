@@ -1,0 +1,29 @@
+
+<% if @output %>
+    <% for p in @output %>
+       <%= p %>
+     <% end %>
+<% end %>
+
+
+
+
+<%= start_form_tag :action => 'parse' %>
+
+
+
+
+ <%= text_field 'toparse', 'toparse', :size => 100,  :skip_style => true, :autocomplete => "off" %>
+
+
+
+
+<input type="submit" value="Parse" />
+<%= end_form_tag %>
+</ul>
+
+<p><p>
+    <%= link_to("WIKI for tagging mistakes",  :controller => "wiki", :action => 
+"show", :id => "POS Mistakes") %>
+    
+    

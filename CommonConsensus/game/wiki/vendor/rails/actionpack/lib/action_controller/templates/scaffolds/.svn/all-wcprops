@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionpack/lib/action_controller/templates/scaffolds
+END
+list.rhtml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionpack/lib/action_controller/templates/scaffolds/list.rhtml
+END
+layout.rhtml
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionpack/lib/action_controller/templates/scaffolds/layout.rhtml
+END
+show.rhtml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionpack/lib/action_controller/templates/scaffolds/show.rhtml
+END
+edit.rhtml
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionpack/lib/action_controller/templates/scaffolds/edit.rhtml
+END
+new.rhtml
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionpack/lib/action_controller/templates/scaffolds/new.rhtml
+END

@@ -1,0 +1,29 @@
+
+
+
+         	  
+<% if @gametype != 3 %>
+      
+<input id="newguess" name="newguess[name]" width="400" size="43" type="text" value="" tabindex="0" autocomplete="off"> <%= submit_tag "Add" %>
+
+<% else %>
+
+<% if  @session[:f_guess].size() == 0 %>
+<input type="radio" id="newguess" name="newguess[name]" value="Moments-Seconds">Moments/Seconds<BR/>
+<input type="radio" id="newguess" name="newguess[name]" value="Seconds-Minutes">Seconds/Minutes<BR/>
+<input type="radio" id="newguess" name="newguess[name]" value="Minutes-Hours">Minutes/Hours<BR/>
+<input type="radio" id="newguess" name="newguess[name]" value="Hours-Days">Hours/Days<BR/>
+<input type="radio" id="newguess" name="newguess[name]" value="Months-Years">Months/Years<BR/>
+
+<% end %>
+<%= submit_tag "Answer", :id => "commit" %>
+
+<% end %>
+<script type="text/javascript">
+document.getElementById('newguess').focus();
+document.getElementById('newguess').value="";
+</script>
+
+<%= end_form_tag %>
+     
+

@@ -1,0 +1,54 @@
+8
+
+dir
+517
+http://tools.assembla.com/svn/ICA/game/wiki/vendor/rails/activerecord/test/fixtures/subscribers
+http://tools.assembla.com/svn/ICA
+
+
+
+2007-07-05T20:23:12.814671Z
+360
+das
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+50a3e429-4e26-0410-b0d5-c43053f8e11c
+
+first
+file
+
+
+
+
+2008-10-09T22:46:45.000000Z
+5147d588011512f42606012e83fd086b
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+second
+file
+
+
+
+
+2008-10-09T22:46:45.000000Z
+6fbe946df6bed7fbe9deb13c78de6dd6
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+

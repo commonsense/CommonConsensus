@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:cc="commonconsensus.components.*"
+    horizontalAlign="center" verticalAlign="top"
+    width="100%" height="100%">
+<mx:Metadata>
+    [Event(name="accountCreate",
+           type="commonconsensus.events.AccountCreateEvent")]
+    [Event(name="login", type="commonconsensus.events.LoginEvent")]
+</mx:Metadata>
+<mx:Script>
+<![CDATA[
+    import commonconsensus.events.AccountCreateEvent;
+    import commonconsensus.events.LoginEvent;
+	import commonconsensus.util.Settings;
+]]>
+</mx:Script>
+    <mx:VBox width="100%" horizontalAlign="center" fontSize="15">
+        <mx:Image source="/cclogo.jpg" />
+        <mx:Spacer height="10"/>
+        <mx:Spacer height="10"/>
+        <mx:Accordion width="600" height="373">
+            <cc:LoginBox fontSize="15" color="#000000"/>
+            <cc:AccountCreateBox/>
+        </mx:Accordion>      
+    </mx:VBox>
+    <mx:Text text="Version {Settings.VERSION}  Created by {Settings.AUTHORS},  MIT Media Lab." width="325"/>
+</mx:VBox>

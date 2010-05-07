@@ -1,0 +1,77 @@
+= LiveTree Protocol
+
+Author:: Emanuel Borsboom (http://www.epiphyte.ca/)
+Copyright:: Copyright (c) 2005-2006 Emanuel Borsboom
+License:: MIT (see LICENSE[link:files/LICENSE.html])
+
+<b>Note:</b> This protocol may change in future alpha versions.
+
+=== Request Format
+
+A GET request is made to the specified <tt>dataUrl</tt> with the following query parameters:
+
+<b>Note:</b> In version 0.1, a POST request is used, but this has been changed for later versions.
+
+* +item_id+ - ID of the item to get data for.  If not specified, the root item should be returned.  
+
+* +depth+ - How deep to recurse down the tree.  <tt>1</tt> means only get the item, <tt>2</tt> gets the item and its children, <tt>3</tt> gets the item, its children, and its children's children, etc.  If not specified, return the whole tree (i.e. recurse down to leaf nodes).
+
+* +include_parents+ - If included and set to any value besides +false+, the item's parents should be included with the result.  The following parameter specifies how far up the tree to go:
+
+  * +root_item_id+ - Only include parents up to this item.
+
+All of the parameters are optional (if none are specified, the defaults mean the entire tree is returned).
+However, it is permissable for +item_id+ and +root_item_id+ to be required by the server 
+(it may return a 500 status if missing), 
+in which case the LiveTree client must have either a +rootItemId+ or +initialData+ option.
+
+
+=== Response Format
+
+The data are returned in JSON[http://www.crockford.com/JSON/index.html] notation.  
+It should consist of one object which has the following properties:
+
+* +id+: ID of the returned item (required).
+
+* +name+: Name of the returned item (required).
+
+* +children+: Array of children of this item (optional).  
+  This should only be included for items up to the depth requested, with one exception: 
+  it _must_ be included if the item has no children.  
+  Each child is an object the same format as described here.
+
+If +include_parents+ was specified in the query, 
+the item returned is the item specified by +root_item_id+ 
+(or the root of the tree if not specified) and each item _up_ _to_ the one specified by
++item_id+ has only one level of children.  Items below the one specifed by +item_id+ have as many levels of children
+as specified by +depth+.
+
+If the item does not exist, return status 404.
+
+=== Examples
+
+The examples use the following tree structure:
+
+	1: Root
+		10: Child 1
+		11: Child 2
+			20: Child 2/Child 1
+			21: Child 2/Child 2
+				30: Child 2/Child2/Child 1
+		12: Child 3
+			25: Child 3/Child 1
+	
+If the request has +item_id+ = 11 and +depth+ = 2, the following is returned:
+
+	{ id: 11, name: "Child 2", children: [
+		{ id: 20, name: "Child 2/Child 1", children: [] },
+		{ id: 21, name: "Child 2/Child 1" } ] }
+		
+If the request has +item_id+ = 21, +depth+ = 1, and +include_parents+ = +true+:
+
+	{ id: 1, name: "Root", children: [
+		{ id: 10, name: "Child 1", children: [] },
+		{ id: 11, name: "Child 2", children: [
+			{ id: 20, name: "Child 2/Child 1", children: [] },
+			{ id: 21, name: "Child 2/Child 2" } ] },
+		{ id: 12, name: "Child 3" } ] }

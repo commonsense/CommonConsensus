@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionwebservice/lib/action_web_service/support
+END
+signature_types.rb
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionwebservice/lib/action_web_service/support/signature_types.rb
+END
+class_inheritable_options.rb
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionwebservice/lib/action_web_service/support/class_inheritable_options.rb
+END

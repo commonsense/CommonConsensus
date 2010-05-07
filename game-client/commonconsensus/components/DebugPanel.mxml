@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:mx="http://www.adobe.com/2006/mxml"
+    title="Debug Console" width="100%" height="200">
+<mx:Script>
+<![CDATA[
+    import mx.collections.ArrayCollection;
+    import commonconsensus.util.DebugMessage;
+
+    [Bindable]
+    private var _messages:ArrayCollection;
+
+    public function addMessage(msg:DebugMessage):void {
+        if (_messages == null) {
+            _messages = new ArrayCollection();
+        }
+        _messages.addItem(msg);
+        updateMessages();
+    }
+
+    private function clearMessages():void {
+        _messages.source.splice(0);
+        updateMessages();
+    }
+
+    private function updateMessages():void {
+        // TODO: this is  inefficient since we're processing
+        //the entire Array every time.)
+        debugTA.text = _messages.source.join("\n");
+    }
+]]>
+</mx:Script>
+    <mx:TextArea id="debugTA" width="100%" height="100%"/>
+    <mx:Button label="clear" click="clearMessages()"/>
+</mx:Panel>

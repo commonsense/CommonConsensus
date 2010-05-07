@@ -1,0 +1,12 @@
+<% for column in User.content_columns %>
+<p>
+  <b><%= column.human_name %>:</b> <%=h @user.send(column.name) %>
+</p>
+<% end %>
+             
+
+
+<%= link_to 'Edit', :action => 'edit', :id => @user %> |
+<%= link_to 'Back', :action => 'list' %>
+<h3> <%= link_to("Statistics", :controller => "goals", :action => "stats")%>
+ </h3>    Various statistics about entries.

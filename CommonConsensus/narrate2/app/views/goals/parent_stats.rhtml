@@ -1,0 +1,30 @@
+
+
+<% ruletypes = ["ACT", "Bad: Conditional", "WANT", "ACT", "DESIRE", "State", "INF_ACT", 
+"Bad: SelfReferential","Bad Attention", "Bad: Unknown"]  %>
+
+
+<% lastg = 100 %>
+<table>
+<% for g in @guesses %>
+
+	<% if lastg != g.g_type %>
+	<tr height="25"><td colspan="3">&nbsp;</td></tr>
+	</table>
+	<table border="0" cellpadding=5 cellspacing=0>
+	<tr>
+		<td colspan="2"><b><%= ruletypes[g.g_type-1] %> / Type <%= g.g_type %> Guesses </b><td><b>Parsed</b>
+	</tr>
+	<% end %>
+
+
+<tr>
+	<td width="5">&nbsp;</td>
+	<td width="380"> <%= g.g_string %></td>
+	<td><%= g.g_both %></td>
+</tr>
+
+	<% lastg = g.g_type %>
+<% end %>
+
+</table>

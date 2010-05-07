@@ -1,0 +1,170 @@
+= LiveTree - Tree widget that loads data asynchronously as-needed
+
+Author:: Emanuel Borsboom (http://www.epiphyte.ca/)
+Copyright:: Copyright (c) 2005-2006 Emanuel Borsboom
+License:: MIT (see LICENSE[link:files/LICENSE.html])
+
+Home page: http://www.epiphyte.ca/code/live_tree.html
+
+LiveTree implements a JavaScript/DHTML tree (hierarchical list) widget that can load data asynchronously as-needed (using AJAX[http://www.adaptivepath.com/publications/essays/archives/000385.php]).
+This makes it ideal for cases where the dataset is too large to load to the browser all at once.
+Data can be provided in the HTML page as well, in which case no asynchronous loading is needed, 
+making this widget suitable for standalone client-side use.
+
+LiveTree consists of two components: client-side JavaScript code that runs in the user's browser 
+which displays and allows the user to navigate the tree, and a server component that
+provides data to the client.  
+The client-server protocol is very simple, which means server
+components can be easily created for just about any web server configuration with minimal effort.
+Presently, the only existing server component is for Ruby On Rails.  The rest of this document
+specifically addresses using LiveTree with Ruby On Rails.
+
+* The client-side JavaScript component is documented here[link:files/LiveTreeClient.html].
+* The client/server protocol is documented here[link:files/LiveTreeProtocol.html].
+* See STATUS[link:files/STATUS.html] for LiveTree's current development status.
+
+=== Features
+
+* Can load data asynchronously as-needed (so only the parts of the tree the user needs are sent to the client).
+* Ideal for large/deep data sets (such as navigating a file system, or complete table of contents of a book).
+* Intelligently pre-loads parts of the tree that it anticipates the user will want to look at, so delays for the user are minimized.
+* Customizable using CSS, snippets of HTML, event handlers, and many options.
+* Controllable from JavaScript.
+* Supports deep linking - can jump to a part of the tree that has not been loaded yet, and it will search for that item and load its parents.
+* Supports an "active" (highlighted) item.
+* Automatically scrolls the tree so that what the user is interested in is on the screen.
+* Can Use <tt>acts_as_tree</tt> or <tt>acts_as_nested_set</tt> model for data from Rails.
+* Easy to integrate into your application.
+* Can be used standalone (client-side only without server support).
+
+=== Setup
+
+Untar/zip the distribution into your rails application directory.  It will create the following:
+
+- <tt>vendor/plugins/live_tree/*</tt> - ruby on rails code
+- <tt>vendor/plugins/live_tree/doc/*</tt> - this documentation
+- <tt>public/images/live_tree*.gif</tt> - images
+- <tt>public/stylesheets/live_tree*.css</tt> - stylesheets
+- <tt>public/javascripts/live_tree.js</tt> - JavaScript
+
+=== Upgrading
+
+If you are upgrading from version 0.1, you should remove the <tt>vendor/live_tree/</tt> folder 
+(it has been replaced with <tt>vendor/plugins/live_tree/</tt>).
+You should also remove the LiveTree-specific code from your <tt>app/controllers/application.rb</tt>,
+since the plugin handles this automatically.
+
+=== Getting Started
+
+This section will walk you through setting up a tree.
+
+==== Model
+
+LiveTree gets your data from an ActiveRecord model object which acts as a tree.  For the sake of efficiency, you
+should also have your model use a counter cache.
+
+For example (in <tt>app/models/person.rb</tt>):
+
+    class Person < ActiveRecord::Base
+        acts_as_tree :order => "name", :counter_cache => true
+    end
+    
+and the table definition:
+
+    CREATE TABLE people (
+        id INT(11) NOT NULL AUTO_INCREMENT,
+        parent_id INT(11) DEFAULT NULL,
+        name VARCHAR(100) NOT NULL DEFAULT '',
+        children_count INT(11) NOT NULL DEFAULT 0,
+        PRIMARY KEY (id)
+    );
+    
+If you wish to serve data that does not come from an ActiveRecord model, simply use an object that has a +children+ and a +parent+ method.
+
+==== Controller
+
+A controller is used to serve data to the client.  The simplest way to set up your controller is as follows (in <tt>app/controllers/family_tree_controller.rb</tt>):
+
+    class FamilyController < ApplicationController		
+        live_tree :family_tree, :model => :person	
+        def show_tree
+            @root = Person.find(params[:id]);
+        end
+    end
+
+The LiveTree::ClassMethods.live_tree class method sets up your controller to serve data to the client.
+
+By default, it gets a data item's name using the model object's +name+ property.
+You can change that using the <tt>:get_item_name_proc</tt> option.
+Also note that the LiveTree does not escape HTML special characters in item names, so your names can
+contain HTML formatting and special characters (and if this is not desirable, you must use the <tt>:get_item_name_proc</tt> option to escape the name).
+
+The <tt>show_tree</tt> action defined in the example reads the specified person from the database, which will be the root (top) of the displayed family tree, for use by the view.
+
+==== View
+
+Finally, the view displays the tree (in <tt>app/views/family/show_tree.rhtml</tt>):
+
+    <div style="width:300px;height:415px">		
+        <%= live_tree(:family_tree, {
+            :initial_data_root => @root,
+            :on_click_item => "alert('You clicked on ' + item.name)",			
+        }) %>
+    </div>
+    
+The LiveTree::LiveTreeHelper.live_tree helper method displays the tree.  
+The <tt>:initial_data_root</tt> option specifies the top item of the tree.
+Since the tree by default expands in size to fill the element it is in,
+we wrap it in a div that has a specified width and height.
+
+You will also need to include the LiveTree JavaScript and stylesheet in your page's HEAD section, 
+as well as the Prototype JavaScript (which is bundled with rails):
+
+    <html>
+        <head>
+            ...
+            <%= stylesheet_link_tag('live_tree') %>	
+            <%= javascript_include_tag "prototype" %>
+            <%= javascript_include_tag "live_tree" %>
+            ...
+        </head>		
+        ...
+    </html>
+
+If you prefer Windows-style expand/collapse icons, include <tt>live_tree_win_icons.css</tt> in addition to <tt>live_tree.css</tt>.
+
+Now if you start rails and browse to http://localhost:3000/family/show_tree/1, it will display the family tree, with the person whose database ID is 1 at the top.
+
+=== Using with acts_as_nested_set
+
+If your model uses +acts_as_nested_set+ instead of +acts_as_tree+, there are some additional steps you must take.  Add the following to your model, replacing +ModelClass+ with the name of your model:
+
+    belongs_to :parent, :class_name => "ModelClass", :foreign_key => "parent_id"
+    def children
+        direct_children
+    end      
+
+If you would prefer to use different names, you may use whatever names you like and use the +get_item_parent_proc+ and +get_item_children_proc+ options of LiveTree::ClassMethods.live_tree.
+
+=== Using non-ActiveRecord data
+
+If your data is not stored in the database, you can pass <tt>Proc</tt>s to LiveTree::ClassMethods.live_tree to access
+data in just about any format.  See the documentation for the following parameters:
+
+* <tt>:find_item_proc</tt> - proc object which, when called with an ID, returns the item with that ID.
+* <tt>:get_item_id_proc</tt> - proc object which, when called with an item, returns the item's ID.
+* <tt>:get_item_name_proc</tt> - proc object which, when called with an item, returns the name of the item to display.
+* <tt>:get_item_children_proc</tt> - proc object which, when called with an item, returns the item's children.
+* <tt>:get_item_parent_proc</tt> - proc object which, when called with an item, returns the item's parent.
+
+=== Creating a custom data action
+
+If you need more control, you can create
+a custom data action.  Simply create a new action in your controller, and have it call the LiveTree.get_live_tree_data method
+to construct data in the appropriate format.  Then, in your view, use LiveTree::LiveTreeHelper.construct_live_tree_function
+to construct the JavaScript for the tree, passing it the <tt>:data_action</tt> argument with the name of your custom data action.
+
+=== Demos
+
+There are a number of examples, with full source code, available that demonstrate the above features.
+You can download them from the LiveTree project home page.

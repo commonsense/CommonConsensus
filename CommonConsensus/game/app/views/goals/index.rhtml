@@ -1,0 +1,29 @@
+
+
+<table border=0 cellpadding="3" width="100%">
+    <tr>
+        <td valign="top">
+            <h3>High Scores</h3>
+            <% oe = 0 %>
+
+            <table cellpadding="3" cellspacing="0" width="250">
+            <% for user in @users %>
+                <tr class="Listline<%= oe %>">
+                    <td><%= user.login %></td>
+                    <td><%= user.score %></td>
+                </tr>
+                <% oe = 1-oe %>
+            <% end %>
+            </table>
+         <td>
+            
+         <td valign="top">
+             
+<h2> <%= link_to("Commonsense Feud", :controller => "feud", :action => "game1")%>
+ </h2>     How common is <i>your</i> common sense?  Play to find out!         </td>
+                 </tr>
+             
+
+          </table>
+<p><p>
+    

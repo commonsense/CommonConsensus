@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>live_tree (LiveTree::ClassMethods)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File live_tree.rb, line 39</span>
+        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">live_tree</span>(<span class="ruby-identifier">name</span>, <span class="ruby-identifier">options</span> = {})
+            <span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot;:model, :model_class_name, or :find_item_proc option is required&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:model</span>] <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:model_class_name</span>] <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:find_item_proc</span>] <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span>
+            <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:model_class_name</span>] <span class="ruby-operator">!=</span> <span class="ruby-keyword kw">nil</span>
+                <span class="ruby-identifier">model</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:model_class_name</span>]
+            <span class="ruby-keyword kw">else</span>
+                <span class="ruby-identifier">model</span> = <span class="ruby-constant">Inflector</span>.<span class="ruby-identifier">camelize</span>(<span class="ruby-identifier">options</span>[<span class="ruby-identifier">:model</span>])
+            <span class="ruby-keyword kw">end</span>
+            <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">const_set</span>(<span class="ruby-value str">&quot;LIVE_TREE_OPTIONS_&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">upcase</span>, <span class="ruby-identifier">options</span>);
+            <span class="ruby-identifier">code</span> = <span class="ruby-value str">&quot;&quot;</span> <span class="ruby-operator">+</span>
+                <span class="ruby-node">&quot;def _#{name}_live_tree_options\n&quot;</span> <span class="ruby-operator">+</span>
+                <span class="ruby-value str">&quot;    LIVE_TREE_OPTIONS_&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">upcase</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;\n&quot;</span> <span class="ruby-operator">+</span>
+                <span class="ruby-value str">&quot;end\n&quot;</span> <span class="ruby-operator">+</span>
+                <span class="ruby-node">&quot;def _#{name}_find_live_tree_item\n&quot;</span> <span class="ruby-operator">+</span>
+                (<span class="ruby-identifier">options</span>[<span class="ruby-identifier">:find_item_proc</span>] <span class="ruby-operator">==</span> <span class="ruby-keyword kw">nil</span> <span class="ruby-operator">?</span> 
+                    (<span class="ruby-value str">&quot;    &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">model</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;.find(live_tree_item_id)\n&quot;</span>) <span class="ruby-operator">:</span>
+                    (<span class="ruby-node">&quot;    _#{name}_live_tree_options[:find_item_proc].call(live_tree_item_id)\n&quot;</span>)) <span class="ruby-operator">+</span>
+                <span class="ruby-value str">&quot;end\n&quot;</span> <span class="ruby-operator">+</span>
+                <span class="ruby-node">&quot;def #{name}_live_tree_data\n&quot;</span> <span class="ruby-operator">+</span>
+                <span class="ruby-node">&quot;    get_live_tree_data(_#{name}_find_live_tree_item, _#{name}_live_tree_options)\n&quot;</span> <span class="ruby-operator">+</span>
+                <span class="ruby-value str">&quot;end\n&quot;</span>
+            <span class="ruby-identifier">class_eval</span> <span class="ruby-identifier">code</span>
+        <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

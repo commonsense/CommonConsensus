@@ -1,0 +1,59 @@
+#!/usr/local/bin/ruby
+
+require 'optparse'
+
+OPTIONS = {
+  :port        => 3000,
+  :ip          => "0.0.0.0",
+  :daemon      => false,
+  :environment => "development",
+  :app_name    => "narrate",
+}
+
+ARGV.options do |opts|
+  script_name = File.basename($0)
+  opts.banner = "Usage: ruby #{script_name} [options]"
+
+  opts.separator ""
+
+  opts.on("-p", "--port=port", Integer,
+          "Runs Rails on the specified port.",
+          "Default: 3000") { |OPTIONS[:port]| }
+  opts.on("-b", "--binding=ip", String,
+          "Binds Rails to the specified ip.",
+          "Default: 0.0.0.0") { |OPTIONS[:ip]| }
+  opts.on("-e", "--environment=name", String,
+          "Specifies the environment to run this server under (test/development/production).",
+          "Default: development") { |OPTIONS[:environment]| }
+  opts.on("-a", "--app-name=name", String,
+          "Specifies the application name.",
+          "Default: rails_app") { |OPTIONS[:environment]| }
+  opts.on("-d", "--daemon",
+          "Make lighttpd / Rails run as a Daemon (only works if fork is available -- meaning on *nix)."
+          ) { OPTIONS[:daemon] = true }
+
+  opts.separator ""
+
+  opts.on("-h", "--help",
+          "Show this help message.") { puts opts; exit }
+
+  opts.parse!
+end
+
+ENV["RAILS_ENV"] = OPTIONS[:environment]
+RAILS_ROOT = File.dirname(__FILE__) + "/../"
+LIGHTTPD_CONF_FILE = "/tmp/#{OPTIONS[:app_name]}_lighttpd.conf"
+
+File.open("#{RAILS_ROOT}config/lighttpd.conf", "r") do |file|
+        conf = file.read
+  conf.gsub!(/PORT/, OPTIONS[:port].to_s)
+  conf.gsub!(/BINDING/, OPTIONS[:ip])
+  conf.gsub!(/RAILS_ROOT/, File.expand_path(RAILS_ROOT))
+  conf.gsub!(/APP_NAME/, OPTIONS[:app_name])
+  File.open(LIGHTTPD_CONF_FILE, "w") { |output| output.write(conf) }
+end
+
+CMD = "/usr/local/sbin/lighttpd -f #{LIGHTTPD_CONF_FILE}" 
+CMD << " -D" unless OPTIONS[:daemon]
+puts CMD
+`#{CMD}`

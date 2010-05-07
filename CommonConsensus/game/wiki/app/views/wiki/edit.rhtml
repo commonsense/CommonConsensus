@@ -1,0 +1,37 @@
+<% 
+  @title = "Editing #{@page.name}"
+  @content_width = 720
+  @hide_navigation = true
+%>
+
+<div id="MarkupHelp" style="float: right; width: 250px; margin-top: 5px">
+  <%= render("#{@web.markup}_help") %>
+  <%= render 'wiki_words_help' %>
+</div>
+
+<%= form_tag({ :action => 'save', :web => @web.address, :id => @page.name},
+             {'id' => 'editForm', 'method' => 'post', 'onSubmit' => 'cleanAuthorName()'})
+%>
+
+<p>
+    <textarea name="content" style="width: 450px; height: 500px"><%= h(@flash[:content] || @page.content) %></textarea>
+</p>
+<p>
+    <input type="submit" value="Submit" accesskey="s"/> as 
+    <input type="text" name="author" id="authorName" value="<%= @author %>" 
+        onClick="this.value == 'AnonymousCoward' ? this.value = '' : true" />
+    | 
+    <%= link_to('Cancel', {:web => @web.address, :action => 'cancel_edit', :id => @page.name},
+          {:accesskey => 'c'})
+    %>
+    <small>(unlocks page)</small>
+</p>
+<%= end_form_tag %>
+
+<script language="JavaScript1.2">
+function cleanAuthorName() {
+  if (document.getElementById('authorName').value == "") {
+    document.getElementById('authorName').value = 'AnonymousCoward';
+  }
+}
+</script>

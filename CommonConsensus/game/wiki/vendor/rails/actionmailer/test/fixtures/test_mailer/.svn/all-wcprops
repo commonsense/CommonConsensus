@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/test/fixtures/test_mailer
+END
+signed_up.rhtml
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/test/fixtures/test_mailer/signed_up.rhtml
+END
+implicitly_multipart_example.text.yaml.rhtml
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/test/fixtures/test_mailer/implicitly_multipart_example.text.yaml.rhtml
+END
+implicitly_multipart_example.text.plain.rhtml
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/test/fixtures/test_mailer/implicitly_multipart_example.text.plain.rhtml
+END
+implicitly_multipart_example.text.html.rhtml
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionmailer/test/fixtures/test_mailer/implicitly_multipart_example.text.html.rhtml
+END

@@ -1,0 +1,3 @@
+
+copy bads from 'bads.txt';
+select setval ('bads_pk_seq', (select max(id) from bads));

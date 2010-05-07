@@ -1,0 +1,33 @@
+<%page_title = "Add a User"%>
+<%= error_messages_for 'user'%>
+
+
+<%= form_tag %>
+
+
+Please fill out this form so you can get started playing the Narrator Game.
+<p><p>
+<table>
+    <tr>
+        <td>User name:</td>
+        <td><%= text_field("user","login") %></td>
+    </tr>
+    <tr>
+        <td>Password:</td>
+        <td><%= password_field("user","password") %></td>
+    </tr>
+    <tr>
+        <td>Email:</td>
+        <td><%= text_field("user","email") %></td>
+    </tr>
+    
+    
+    <tr>
+        <td colspan="2" align="center">
+            <input type="submit" value="Add User" />
+        </td>
+    </tr>
+</table>
+
+
+<%= end_form_tag %>

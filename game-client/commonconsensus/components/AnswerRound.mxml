@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" borderColor="#004B7F" backgroundColor="#548988">
+
+
+<mx:Script>
+	<![CDATA[
+		import com.adobe.serialization.json.JSON;
+		
+		import commonconsensus.util.Settings;
+		
+		import mx.collections.ArrayCollection;
+		import mx.rpc.events.ResultEvent;
+
+		[Bindable]
+		public var points:uint = 0;
+		
+		[Bindable]
+		public var other_users:uint = 0;
+		
+		[Bindable]
+		public var total_score:uint = 0;
+				
+		[Bindable]
+		public var question:String;
+		
+		[Bindable]
+		public var top_user:ArrayCollection=new ArrayCollection();
+		
+		[Bindable]
+		public var all_answer:ArrayCollection=new ArrayCollection();
+							
+				
+		public function updateScore():void {
+			CommonConsensus.debug("updating score");
+			svcGetFinalScore.send();
+		}
+	 
+	  private function handleFinalScore(event:ResultEvent):void {
+    	
+		CommonConsensus.debug("handleFinalScore() response: "+event.result.toString());
+		var finalObj:Object = JSON.decode(event.result.toString()) as Object;
+		points =finalObj.score.points;
+
+       	other_users = finalObj.score.other_users;
+		CommonConsensus.debug("Points: "+points);
+		var str:String=finalObj.score.top_users;
+		CommonConsensus.debug("Points: "+points);
+		var sty:String=finalObj.score.all_answers;
+		CommonConsensus.debug("answers1: "+(JSON.decode(str) as ArrayCollection));	
+		top_user.removeAll();
+		all_answer.removeAll();
+		for each ( var ite:Object in JSON.decode(str)){
+			CommonConsensus.debug("person: "+ite.login+"  score: "+ite.score);
+			top_user.addItem(Object(ite));
+			trace(ite);
+		}
+		for each ( var it:Object in JSON.decode(sty)){
+			CommonConsensus.debug("person: "+it.answer+"  score: "+it.score);
+			all_answer.addItem(Object(it));
+			trace(it);
+		}			
+		CommonConsensus.debug("Answers for this session: "+all_answer);
+		CommonConsensus.debug("Top users this sesssion : "+top_user);
+		for each ( var item:Object in all_answer){
+			item.score=int(item.score)+1;
+			trace(item);
+		}
+		
+		scoreText0.htmlText = "Results for question: "+question.toString();
+		scoreText0.visible=true;
+		scoreText1.visible=true;
+		scoreText2.visible=true;
+		
+		
+
+    }
+		
+		
+	]]>
+</mx:Script>
+	   <mx:HTTPService
+        id="svcGetFinalScore"
+        url="{Settings.BASE_URL}/flexserver/finalscore/"
+        resultFormat="e4x"
+        result="handleFinalScore(event)"/>
+	
+	    <mx:SeriesSlide 
+        id="slideIn" 
+        duration="1000" 
+        direction="right"
+    />
+
+	<mx:Text x="33.5" y="29" id="scoreText0" fontFamily="Georgia" fontSize="20" color="#FFFFFF" height="30" width="666"/>
+	<mx:Text x="33.5" y="557" id="scoreText1" text="You have scored {points} points with {other_users} people playing." fontFamily="Georgia" fontSize="20" color="#343434" height="53"/>
+	<mx:Text x="475.5" y="67" id="scoreText2" text="All time top scores:&#xd;" fontFamily="Georgia" fontSize="20" color="#082A58"/>
+	<mx:Text x="131.5" y="67" id="scoreText3" text="Answers this round:" fontFamily="Georgia" fontSize="20" color="#082A58"/>
+	<mx:PieChart id="pieChart0"
+	    textAlign="left" 
+	    fontFamily="Arial" 
+	    fontSize="22"
+		showDataTips="true"
+		dataProvider="{this.all_answer}"  x="33.5" y="103">
+	
+		<mx:series>
+			<mx:PieSeries field="score" nameField="answer" labelPosition="none"/>
+		</mx:series>
+				
+	</mx:PieChart>
+	<mx:Legend dataProvider="{pieChart0}" y="325" x="33.5" height="213" width="238"/>
+	<mx:Spacer width="100%" />
+
+	    <mx:BarChart id="barChart0"
+            type="clustered" fontFamily="Arial" fontSize="22"
+            height="261"
+            width="319.5"
+            showDataTips="true"
+			dataProvider="{this.top_user}" x="441.5" y="103">
+	   		<!--mx:horizontalAxis>
+                    <mx:CategoryAxis dataProvider="{top_user}" categoryField="Country"/>
+                </mx:horizontalAxis-->
+        	<mx:verticalAxis>
+            		<mx:CategoryAxis categoryField="login" />
+       		</mx:verticalAxis>
+        	<mx:series>
+            	<mx:BarSeries yField="login" xField="score" styleName="PCCSeries1" displayName="Points" color="red"/>
+        	</mx:series>
+    	</mx:BarChart>
+
+
+
+</mx:Canvas>

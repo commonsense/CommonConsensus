@@ -1,0 +1,67 @@
+
+<%   @game_questions = ["Why would you want to:",
+"What is something you can do if you wanted to:",
+"Name some places involved with:"] %>
+               <h3> <%= @game_questions[@gametype] %> <br> 
+           <% if @gametype != 3 %>
+           	
+           	<font size="+2" color="#000066"><%= @goal.name %>?
+           	
+           <% else %>
+  				<% head = @goal.name.split[0] %>
+          		<% newhead = present_part(head) %>
+           
+           <font size="+2" color="#000066"><%= newhead%> <%= @goal.name.gsub(head,"") %>?
+           
+           <% end %>
+           
+            </font></h3>
+                   
+    <ul>    
+    <% i = 1%>
+    <% points = 0 %>
+    
+   
+ 
+    
+    
+<table border=0 cellpadding=0 cellspacing=10>
+<tr><td valign="top" width="75%">
+    <table border=0 cellpadding="5" cellspacing="0" >
+    <% oe = 0 %>    
+
+    <% for ans in @answers %>
+    <tr class="ListLine<%=oe%>">
+        <td> <%= ans['count'] %> </td>
+        <td><B> <%= ans['question'] %> </B></td>
+        <td> 
+        <I>
+        	<% it = 1 %>
+    		<% for q in ans['strings'] %>
+    			<%= q %><% if it > 3 %>...<% break %><% elsif it < ans['strings'].size %>, <% end %> <% it+=1%>  
+    		<% end %>
+	    </I>
+	    </td>
+		<td width="50"> <% if ans['users'].include?(session[:user].id) %>
+				+ <%= ans['score'] %> <% points+= ans['score'] %>
+    		  <% end %>
+        </td>
+          <% oe = 1-oe %>   
+  
+    </tr>
+    <% end %>
+    </table>
+</td><td valign="top">    
+  <% if points > 0 %>
+      <font color="#C00000"><b><h2>+ <%= points %> earned!</b></h2></font>
+   <% else %>
+    Sorry, no points this round.  Please try again.<br>
+	<% end %>
+</td></tr></table>
+   
+   <p>
+<span id=ChangeMe><b><%= @next %></b></span> seconds before next game.<br>
+   
+      <%= render(:partial => 'users')%>
+    <br><Br>
+    

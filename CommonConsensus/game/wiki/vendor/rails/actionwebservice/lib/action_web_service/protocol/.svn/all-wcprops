@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionwebservice/lib/action_web_service/protocol
+END
+abstract.rb
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionwebservice/lib/action_web_service/protocol/abstract.rb
+END
+soap_protocol.rb
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionwebservice/lib/action_web_service/protocol/soap_protocol.rb
+END
+xmlrpc_protocol.rb
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionwebservice/lib/action_web_service/protocol/xmlrpc_protocol.rb
+END
+discovery.rb
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/actionwebservice/lib/action_web_service/protocol/discovery.rb
+END

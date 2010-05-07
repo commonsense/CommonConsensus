@@ -1,0 +1,189 @@
+8
+
+dir
+517
+http://tools.assembla.com/svn/ICA/game/wiki/vendor/rails/actionwebservice/lib/action_web_service
+http://tools.assembla.com/svn/ICA
+
+
+
+2007-07-05T20:23:12.814671Z
+360
+das
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+50a3e429-4e26-0410-b0d5-c43053f8e11c
+
+client.rb
+file
+
+
+
+
+2008-10-09T22:47:02.000000Z
+05db22cc5a8a813ae5173912710aa559
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+scaffolding.rb
+file
+
+
+
+
+2008-10-09T22:47:02.000000Z
+c415ba8731952bf039bfa0f6c14ca96d
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+container
+dir
+
+container.rb
+file
+
+
+
+
+2008-10-09T22:47:02.000000Z
+b22c29a2bd5789af14f1c5de9f5333bc
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+struct.rb
+file
+
+
+
+
+2008-10-09T22:47:02.000000Z
+4b9568661ed08e0d292abffa474c7a87
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+dispatcher
+dir
+
+dispatcher.rb
+file
+
+
+
+
+2008-10-09T22:47:02.000000Z
+455203d06bd858a20146f60cd8d02664
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+casting.rb
+file
+
+
+
+
+2008-10-09T22:47:02.000000Z
+348e2771679875a6d449daca7bfeeb66
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+test_invoke.rb
+file
+
+
+
+
+2008-10-09T22:47:02.000000Z
+d807170f9a2852486390218b94e9982d
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+templates
+dir
+
+protocol
+dir
+
+protocol.rb
+file
+
+
+
+
+2008-10-09T22:47:02.000000Z
+7d1660d78f669b65e883ff9ca085cc41
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+invocation.rb
+file
+
+
+
+
+2008-10-09T22:47:02.000000Z
+65b453d41058fba8535a8f00507f5fa9
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+api.rb
+file
+
+
+
+
+2008-10-09T22:47:02.000000Z
+6a5c22d69596f5816331b7ca24584fc4
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+support
+dir
+
+base.rb
+file
+
+
+
+
+2008-10-09T22:47:02.000000Z
+d43ddc05c29ea8d9d7429843d0dc31b5
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+client
+dir
+

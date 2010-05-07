@@ -1,0 +1,48 @@
+
+<h3><%= @goal.name %></h3>
+
+Here is a list of people's inputs:
+
+<br><Br>
+
+<h3>Places where you'd <%= @goal.name %></h3>
+<ul>
+	<% for f in @g_env %>
+		<li><%= f.g_string %> (<%= f.num %>)
+	<% end %>
+</ul>
+
+<p>
+<h3>Parent Goals <%= @goal.name %></h3>
+<ul>
+	<% for f in @g_parent %>
+		<li><%= f.g_string %> (<%= f.num %>)
+	<% end %>
+</ul>
+
+<p>
+<h3>Sub Goals <%= @goal.name %></h3>
+<ul>
+	<% for f in @g_child %>
+		<li><%= f.g_string %> (<%= f.num %>)
+	<% end %>
+</ul>
+
+
+    
+  <% if @goal.parent %>
+                <div align="center" style="width:500px;height:500px">
+                        <%= live_tree(:goal_tree, {
+                                :initial_data_root => @goal.parent,
+                                #:on_click_item => "alert('You clicked on ' + item.name)",
+                        }) %>
+                </div>
+                <% else %>
+                <div align="center" style="width:500px;height:500px">
+                        <%= live_tree(:goal_tree, {
+                                :initial_data_root => @goal,
+                                #:on_click_item => "alert('You clicked on ' + item.name)",
+                        }) %>
+                </div>
+                <% end %>
+        

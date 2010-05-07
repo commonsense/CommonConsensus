@@ -1,0 +1,57 @@
+8
+
+dir
+517
+http://tools.assembla.com/svn/ICA/game/wiki/vendor/rails/railties/lib/rails_generator/generators/components/controller
+http://tools.assembla.com/svn/ICA
+
+
+
+2007-07-05T20:23:12.814671Z
+360
+das
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+50a3e429-4e26-0410-b0d5-c43053f8e11c
+
+USAGE
+file
+
+
+
+
+2008-10-09T22:47:06.000000Z
+5f204f20aab0be59f816faecd699c395
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+controller_generator.rb
+file
+
+
+
+
+2008-10-09T22:47:06.000000Z
+b0b48ccc6be142e014d97c753e729960
+2007-07-05T20:23:12.814671Z
+360
+das
+has-props
+
+templates
+dir
+

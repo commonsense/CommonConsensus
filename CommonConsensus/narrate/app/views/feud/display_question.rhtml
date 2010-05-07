@@ -1,0 +1,77 @@
+
+<%   @game_questions = ["Why would you want to:",
+"What is something you can do if you wanted to:",
+"In what situations would you not want to:",
+"List some things that could go wrong with:"] %>
+            
+            
+<p><p><p>
+
+    <table border=0 cellpading=0 cellspacing=0 width="100%">
+    <tr>
+    	<td width="50%" valign="top" style="font-family: verdana,arial; color: #aaaaaa;">
+    	
+    	Off the top of your head,<br> enter as many in as you can:<br><br>
+
+		
+		<table border="0" cellpadding="5" bgcolor="white" width="100%">
+			<tr>
+				<!-- Question Display -->
+				<td valign="middle" align="center" style="border:1px solid #bbbbbb;" height="250">
+				<p> 
+	            
+			<h3><%= @game_questions[@gametype] %><br> 
+                                   <font size="+2" color="#000000">
+                                                      <% if @gametype < 3 -%>
+                                                                      <%= @goal.name -%>?
+                                                              <% else -%>
+                                                                    <% head = @goal.name.split[0] -%>
+                                                              <% newhead = present_part(head) -%>
+                                                              <%= newhead%> <%= @goal.name.gsub(head,"") -%>?
+                                                   <% end -%>
+                                                     </font>
+                                      </h3>  
+		    
+		    <p>
+	            </td>
+	         </tr>
+	     </table>
+	     <font size="-1"><i><span id="ChangeMe"><b><%= @next %></b></span> seconds left!</i></font><br>
+			<%= periodically_call_remote(:update => "dynamic-score", :url => { :action => :dynamic_score, :id => "3" }, :begin => "alert('upload beginning')", :frequency => 4) %>
+ 			<form action="/feud/add_item" method="post" onsubmit="new Ajax.Updater('dynamic-score', '/feud/add_item', {asynchronous:true, evalScripts:true, parameters:Form.serialize(this)}); getel('newguess').value=''; return false;">
+            <div id="formpart"> <%= render(:partial => 'list')%></div>
+      
+		 
+      
+      <span id="dynamic-score"></span>
+    	</td>
+    	<td width="15%">&nbsp;</td>
+    	<td width="35%" valign="top" style="font-family: verdana,arial; color: #aaaaaa;">
+    	
+    	Other people who are playing<Br> right now:
+    	 <%= render(:partial => 'users')%>
+    	</td>
+    </tr>
+    </table>
+    
+<p>
+<p><p>
+<p><p>
+<p>
+    <% if @session[:f_guess].size == 0%>	 
+	<div align="left"><font size="1" >
+<%= link_to "Bad Question?", :action => "game1", :bad_goal_id => @goal.id, :game_type => @gametype, :style => "color: '#FF9834';" %>
+	</font></div> 
+<% end %>
+    
+ 
+    
+
+
+ 
+
+
+
+
+
+

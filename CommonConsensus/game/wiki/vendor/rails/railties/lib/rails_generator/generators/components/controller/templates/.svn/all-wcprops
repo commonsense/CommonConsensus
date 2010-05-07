@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/railties/lib/rails_generator/generators/components/controller/templates
+END
+view.rhtml
+K 25
+svn:wc:ra_dav:version-url
+V 127
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/railties/lib/rails_generator/generators/components/controller/templates/view.rhtml
+END
+helper.rb
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/railties/lib/rails_generator/generators/components/controller/templates/helper.rb
+END
+functional_test.rb
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/railties/lib/rails_generator/generators/components/controller/templates/functional_test.rb
+END
+controller.rb
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/railties/lib/rails_generator/generators/components/controller/templates/controller.rb
+END

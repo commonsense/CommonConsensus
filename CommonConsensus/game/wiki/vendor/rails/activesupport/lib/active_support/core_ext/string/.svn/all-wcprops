@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/activesupport/lib/active_support/core_ext/string
+END
+inflections.rb
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/activesupport/lib/active_support/core_ext/string/inflections.rb
+END
+conversions.rb
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/ICA/!svn/ver/360/game/wiki/vendor/rails/activesupport/lib/active_support/core_ext/string/conversions.rb
+END

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    xmlns:cc="commonconsensus.components.*"
+    layout="vertical"
+	backgroundGradientAlphas="[1.0, 1.0]" 
+	backgroundGradientColors="[#FFFFFF, #FDF9BA]"
+    horizontalAlign="center"
+    verticalAlign="top"
+    paddingLeft="0"
+    paddingRight="0"
+    paddingTop="0" horizontalScrollPolicy="off" verticalScrollPolicy="off"
+    paddingBottom="0"
+    width="800"
+    height="100%">
+    
+<mx:Script>
+<![CDATA[
+    import commonconsensus.components.DebugPanel;
+    import commonconsensus.events.AccountCreateEvent;
+    import commonconsensus.events.LoginEvent;
+    import commonconsensus.util.DebugMessage;
+    import mx.collections.ArrayCollection;
+
+    [Bindable]
+    private var _user : Object;
+
+	[Bindable]
+	private var _game : Object;
+
+	[Bindable]
+	private var _results:XMLList;
+	
+		
+    public static function debug(str:String):void {
+        application.debugPanel.addMessage(
+            new DebugMessage(str));
+    }
+
+
+    private function handleAccountCreate(e:AccountCreateEvent):
+    void {
+    	_game = e.game;
+        login(e.user);
+    }
+
+    private function handleLogin(e:LoginEvent):void {
+        _game = e.game;
+        login(e.user);
+		_game.start = 0
+   
+    }
+
+    private function login(user:Object):void {    	
+    	_user = user;
+        mainStack.selectedChild = mainBox;
+    }
+]]>
+</mx:Script>
+    <mx:VDividedBox width="100%" height="100%"  horizontalScrollPolicy="off" verticalScrollPolicy="off">
+        <mx:ViewStack id="mainStack" width="100%" height="100%"  horizontalScrollPolicy="off" verticalScrollPolicy="off">
+            <cc:SplashBox id="splashBox"
+                accountCreate="handleAccountCreate(event)"
+                login="handleLogin(event)" width="100%"/>
+            <cc:MainBox id="mainBox" user="{_user}" game="{_game}"  horizontalScrollPolicy="off" verticalScrollPolicy="off"/>
+        </mx:ViewStack>
+        <cc:DebugPanel id="debugPanel" width="100%"
+            height="0%"/>
+    </mx:VDividedBox>
+</mx:Application>

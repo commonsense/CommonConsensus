@@ -1,0 +1,12 @@
+<h1>Add Structure</h1>
+
+<%= start_form_tag :action => 'create_struct' %>
+  <%= render_partial 'sform' %>
+  <%= submit_tag "Create" %>
+<%= end_form_tag %>
+
+
+
+Use <B>f::TYPE</b> to create a blank.
+
+<%= link_to 'Back', :action => 'list' %>

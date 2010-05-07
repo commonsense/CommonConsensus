@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: README</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>README</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>README
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Sun Jan 29 22:03:42 Pacific Standard Time 2006</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1><a href="../classes/LiveTree.html">LiveTree</a> - Tree widget that loads data asynchronously as-needed</h1>
+<table>
+<tr><td valign="top">Author:</td><td>Emanuel Borsboom (<a href="http://www.epiphyte.ca">www.epiphyte.ca</a>/)
+
+</td></tr>
+<tr><td valign="top">Copyright:</td><td>Copyright &#169; 2005-2006 Emanuel Borsboom
+
+</td></tr>
+<tr><td valign="top">License:</td><td>MIT (see <a href="LICENSE.html">LICENSE</a>)
+
+</td></tr>
+</table>
+<p>
+Home page: <a
+href="http://www.epiphyte.ca/code/live_tree.html">www.epiphyte.ca/code/live_tree.html</a>
+</p>
+<p>
+<a href="../classes/LiveTree.html">LiveTree</a> implements a
+JavaScript/DHTML tree (hierarchical list) widget that can load data
+asynchronously as-needed (using <a
+href="http://www.adaptivepath.com/publications/essays/archives/000385.php">AJAX</a>).
+This makes it ideal for cases where the dataset is too large to load to the
+browser all at once. Data can be provided in the HTML page as well, in
+which case no asynchronous loading is needed, making this widget suitable
+for standalone client-side use.
+</p>
+<p>
+<a href="../classes/LiveTree.html">LiveTree</a> consists of two components:
+client-side JavaScript code that runs in the user&#8217;s browser which
+displays and allows the user to navigate the tree, and a server component
+that provides data to the client. The client-server protocol is very
+simple, which means server components can be easily created for just about
+any web server configuration with minimal effort. Presently, the only
+existing server component is for Ruby On Rails. The rest of this document
+specifically addresses using <a
+href="../classes/LiveTree.html">LiveTree</a> with Ruby On Rails.
+</p>
+<ul>
+<li>The client-side JavaScript component is documented <a
+href="LiveTreeClient.html">here</a>.
+
+</li>
+<li>The client/server protocol is documented <a
+href="LiveTreeProtocol.html">here</a>.
+
+</li>
+<li>See <a href="STATUS.html">STATUS</a> for <a
+href="../classes/LiveTree.html">LiveTree</a>&#8217;s current development
+status.
+
+</li>
+</ul>
+<h3>Features</h3>
+<ul>
+<li>Can load data asynchronously as-needed (so only the parts of the tree the
+user needs are sent to the client).
+
+</li>
+<li>Ideal for large/deep data sets (such as navigating a file system, or
+complete table of contents of a book).
+
+</li>
+<li>Intelligently pre-loads parts of the tree that it anticipates the user will
+want to look at, so delays for the user are minimized.
+
+</li>
+<li>Customizable using CSS, snippets of HTML, event handlers, and many options.
+
+</li>
+<li>Controllable from JavaScript.
+
+</li>
+<li>Supports deep linking - can jump to a part of the tree that has not been
+loaded yet, and it will search for that item and load its parents.
+
+</li>
+<li>Supports an &quot;active&quot; (highlighted) item.
+
+</li>
+<li>Automatically scrolls the tree so that what the user is interested in is on
+the screen.
+
+</li>
+<li>Can Use <tt>acts_as_tree</tt> or <tt>acts_as_nested_set</tt> model for data
+from Rails.
+
+</li>
+<li>Easy to integrate into your application.
+
+</li>
+<li>Can be used standalone (client-side only without server support).
+
+</li>
+</ul>
+<h3>Setup</h3>
+<p>
+Untar/zip the distribution into your rails application directory. It will
+create the following:
+</p>
+<ul>
+<li><tt>vendor/plugins/live_tree/*</tt> - ruby on rails code
+
+</li>
+<li><tt>vendor/plugins/live_tree/doc/*</tt> - this documentation
+
+</li>
+<li><tt>public/images/live_tree*.gif</tt> - images
+
+</li>
+<li><tt>public/stylesheets/live_tree*.css</tt> - stylesheets
+
+</li>
+<li><tt>public/javascripts/live_tree.js</tt> - JavaScript
+
+</li>
+</ul>
+<h3>Upgrading</h3>
+<p>
+If you are upgrading from version 0.1, you should remove the
+<tt>vendor/live_tree/</tt> folder (it has been replaced with
+<tt>vendor/plugins/live_tree/</tt>). You should also remove the <a
+href="../classes/LiveTree.html">LiveTree</a>-specific code from your
+<tt>app/controllers/application.rb</tt>, since the plugin handles this
+automatically.
+</p>
+<h3>Getting Started</h3>
+<p>
+This section will walk you through setting up a tree.
+</p>
+<h4>Model</h4>
+<p>
+<a href="../classes/LiveTree.html">LiveTree</a> gets your data from an
+ActiveRecord model object which acts as a tree. For the sake of efficiency,
+you should also have your model use a counter cache.
+</p>
+<p>
+For example (in <tt>app/models/person.rb</tt>):
+</p>
+<pre>
+    class Person &lt; ActiveRecord::Base
+        acts_as_tree :order =&gt; &quot;name&quot;, :counter_cache =&gt; true
+    end
+</pre>
+<p>
+and the table definition:
+</p>
+<pre>
+    CREATE TABLE people (
+        id INT(11) NOT NULL AUTO_INCREMENT,
+        parent_id INT(11) DEFAULT NULL,
+        name VARCHAR(100) NOT NULL DEFAULT '',
+        children_count INT(11) NOT NULL DEFAULT 0,
+        PRIMARY KEY (id)
+    );
+</pre>
+<p>
+If you wish to serve data that does not come from an ActiveRecord model,
+simply use an object that has a <tt>children</tt> and a <tt>parent</tt>
+method.
+</p>
+<h4>Controller</h4>
+<p>
+A controller is used to serve data to the client. The simplest way to set
+up your controller is as follows (in
+<tt>app/controllers/family_tree_controller.rb</tt>):
+</p>
+<pre>
+    class FamilyController &lt; ApplicationController
+        live_tree :family_tree, :model =&gt; :person
+        def show_tree
+            @root = Person.find(params[:id]);
+        end
+    end
+</pre>
+<p>
+The <a
+href="../classes/LiveTree/ClassMethods.html#M000006">LiveTree::ClassMethods.live_tree</a>
+class method sets up your controller to serve data to the client.
+</p>
+<p>
+By default, it gets a data item&#8217;s name using the model object&#8217;s
+<tt>name</tt> property. You can change that using the
+<tt>:get_item_name_proc</tt> option. Also note that the <a
+href="../classes/LiveTree.html">LiveTree</a> does not escape HTML special
+characters in item names, so your names can contain HTML formatting and
+special characters (and if this is not desirable, you must use the
+<tt>:get_item_name_proc</tt> option to escape the name).
+</p>
+<p>
+The <tt>show_tree</tt> action defined in the example reads the specified
+person from the database, which will be the root (top) of the displayed
+family tree, for use by the view.
+</p>
+<h4>View</h4>
+<p>
+Finally, the view displays the tree (in
+<tt>app/views/family/show_tree.rhtml</tt>):
+</p>
+<pre>
+    &lt;div style=&quot;width:300px;height:415px&quot;&gt;
+        &lt;%= live_tree(:family_tree, {
+            :initial_data_root =&gt; @root,
+            :on_click_item =&gt; &quot;alert('You clicked on ' + item.name)&quot;,
+        }) %&gt;
+    &lt;/div&gt;
+</pre>
+<p>
+The <a
+href="../classes/LiveTree/LiveTreeHelper.html#M000003">LiveTree::LiveTreeHelper.live_tree</a>
+helper method displays the tree. The <tt>:initial_data_root</tt> option
+specifies the top item of the tree. Since the tree by default expands in
+size to fill the element it is in, we wrap it in a div that has a specified
+width and height.
+</p>
+<p>
+You will also need to include the <a
+href="../classes/LiveTree.html">LiveTree</a> JavaScript and stylesheet in
+your page&#8217;s HEAD section, as well as the Prototype JavaScript (which
+is bundled with rails):
+</p>
+<pre>
+    &lt;html&gt;
+        &lt;head&gt;
+            ...
+            &lt;%= stylesheet_link_tag('live_tree') %&gt;
+            &lt;%= javascript_include_tag &quot;prototype&quot; %&gt;
+            &lt;%= javascript_include_tag &quot;live_tree&quot; %&gt;
+            ...
+        &lt;/head&gt;
+        ...
+    &lt;/html&gt;
+</pre>
+<p>
+If you prefer Windows-style expand/collapse icons, include
+<tt>live_tree_win_icons.css</tt> in addition to <tt>live_tree.css</tt>.
+</p>
+<p>
+Now if you start rails and browse to <a
+href="http://localhost:3000/family/show_tree/1">localhost:3000/family/show_tree/1</a>,
+it will display the family tree, with the person whose database ID is 1 at
+the top.
+</p>
+<h3>Using with acts_as_nested_set</h3>
+<p>
+If your model uses <tt>acts_as_nested_set</tt> instead of
+<tt>acts_as_tree</tt>, there are some additional steps you must take. Add
+the following to your model, replacing <tt>ModelClass</tt> with the name of
+your model:
+</p>
+<pre>
+    belongs_to :parent, :class_name =&gt; &quot;ModelClass&quot;, :foreign_key =&gt; &quot;parent_id&quot;
+    def children
+        direct_children
+    end
+</pre>
+<p>
+If you would prefer to use different names, you may use whatever names you
+like and use the <tt>get_item_parent_proc</tt> and
+<tt>get_item_children_proc</tt> options of <a
+href="../classes/LiveTree/ClassMethods.html#M000006">LiveTree::ClassMethods.live_tree</a>.
+</p>
+<h3>Using non-ActiveRecord data</h3>
+<p>
+If your data is not stored in the database, you can pass <tt>Proc</tt>s to
+<a
+href="../classes/LiveTree/ClassMethods.html#M000006">LiveTree::ClassMethods.live_tree</a>
+to access data in just about any format. See the documentation for the
+following parameters:
+</p>
+<ul>
+<li><tt>:find_item_proc</tt> - proc object which, when called with an ID,
+returns the item with that ID.
+
+</li>
+<li><tt>:get_item_id_proc</tt> - proc object which, when called with an item,
+returns the item&#8217;s ID.
+
+</li>
+<li><tt>:get_item_name_proc</tt> - proc object which, when called with an item,
+returns the name of the item to display.
+
+</li>
+<li><tt>:get_item_children_proc</tt> - proc object which, when called with an
+item, returns the item&#8217;s children.
+
+</li>
+<li><tt>:get_item_parent_proc</tt> - proc object which, when called with an
+item, returns the item&#8217;s parent.
+
+</li>
+</ul>
+<h3>Creating a custom data action</h3>
+<p>
+If you need more control, you can create a custom data action. Simply
+create a new action in your controller, and have it call the <a
+href="../classes/LiveTree.html#M000001">LiveTree.get_live_tree_data</a>
+method to construct data in the appropriate format. Then, in your view, use
+<a
+href="../classes/LiveTree/LiveTreeHelper.html#M000004">LiveTree::LiveTreeHelper.construct_live_tree_function</a>
+to construct the JavaScript for the tree, passing it the
+<tt>:data_action</tt> argument with the name of your custom data action.
+</p>
+<h3>Demos</h3>
+<p>
+There are a number of examples, with full source code, available that
+demonstrate the above features. You can download them from the <a
+href="../classes/LiveTree.html">LiveTree</a> project home page.
+</p>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+= Status
+
+LiveTree is very alpha.
+
+* It has only been tested with Firefox 1.0.4, Internet Explorer 6, and Opera 8 under Windows XP.
+* There are sometimes issues when the same part of the tree is undergoing multiple data retrievals.
+  This doesn't happy very often, though.
+* The error handling is poor.
+* No doubt there are plenty of bugs.
+
+However, it does seem to work and be useful!
+
+See TODO[link:files/TODO.html] for a prioritized to-do list.

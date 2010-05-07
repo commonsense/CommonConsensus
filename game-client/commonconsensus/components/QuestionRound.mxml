@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml" width="756" height="832" horizontalAlign="center" paddingTop="0" backgroundAlpha="0.0" borderColor="#001320">
+<mx:Metadata>
+  [Event(name="flagQuestion", type="commonconsensus.events.FlagQuestionEvent")]
+</mx:Metadata>
+	<mx:Script>
+		<![CDATA[
+			import mx.events.CollectionEvent;
+			import mx.collections.ArrayCollection;
+		    import com.adobe.serialization.json.JSON;
+			import commonconsensus.events.FlagQuestionEvent;
+			import commonconsensus.util.Settings;
+
+			[Bindable]
+			public var bgColor:uint;
+			
+			[Bindable]
+			public var game:Object;
+			
+			[Bindable]
+			public var user:Object;
+			
+			[Bindable]
+			public var timeLeft:int;
+		
+			[Bindable]
+			public var peoplePlaying:String = "";
+			
+			[Bindable]
+			public var resultArray:ArrayCollection;// = new ArrayCollection();
+			
+		    import mx.controls.Alert;
+    		import mx.rpc.events.ResultEvent;
+    		import commonconsensus.events.LoginEvent;
+
+    		private function submitAnswer():void {
+    			CommonConsensus.debug("user id: " +user.toString());
+    			if (this.guess.text != "") {	
+        		svnSubmitAnswer.send({user_id: user.id.toString(), 
+        						  concept_id: game.concept_id.toString(),
+        						  relation_type_id: game.relation_type_id.toString(),
+        						  answer: this.guess.text});
+       			
+        		this.guess.text = "";
+       			}
+    		}
+    		
+   
+    		private function flagQuestion(type:int):void {
+    			svnFlagQuestion.send({problem_type: type, game_started: game.start});
+    		}
+
+
+			private function handleFlagQuestion(event:ResultEvent):void {
+		        var result:Object = event.result;
+		        CommonConsensus.debug("Dispatching flag question Event"+ result.toString());
+		        var obj:Object = JSON.decode(result.toString()) as Object;
+		        dispatchEvent(new FlagQuestionEvent(obj));
+		    }
+		    
+		    
+		    private function handleAnswer(event:ResultEvent):void {
+		    	//CommonConsensus.debug("Result in handle answer "+JSON.decode(event.result.toString()));
+		        var result:Object = JSON.decode(event.result.toString());
+		        resultArray.removeAll();
+				for each ( var ite:Object in result.scores){
+					resultArray.addItem(Object(ite));
+					trace(ite);
+				}
+		        peoplePlaying = result.people_playing.toString();
+		        CommonConsensus.debug("game question: "+game.question)
+
+		      
+		    }
+		    
+		]]>
+	</mx:Script>
+
+	<mx:Canvas width="600" height="151"  backgroundColor="{bgColor}" cornerRadius="9" borderStyle="outset"  backgroundAlpha="0.75">
+		<mx:HBox horizontalAlign="center">
+		</mx:HBox>
+		<mx:VBox x="0" y="0" width="596" height="147" horizontalAlign="center" verticalAlign="middle">
+			<mx:Text text="&#xd;"  fontFamily="Georgia" fontSize="20" textAlign="center" htmlText="{game.question.toString()}" height="78" width="556"/>
+		</mx:VBox>
+	</mx:Canvas>
+	<mx:HBox width="595">
+		<mx:Label text="Remaining Time: {timeLeft.toString()}" fontFamily="Georgia" fontSize="12"/>
+		<mx:HBox width="{timeLeft*10}" borderColor="#FD0000" backgroundColor="#BE0202" height="8">
+		</mx:HBox>
+	</mx:HBox>
+
+
+    <mx:HTTPService
+        id="svnSubmitAnswer"
+        url="{Settings.BASE_URL}/flexserver/relations/"
+        resultFormat="e4x"
+        method="POST"
+        result="handleAnswer(event)"/>
+       
+     <mx:HTTPService
+        id="svnFlagQuestion"
+        url="{Settings.BASE_URL}/flexserver/flagquestion/"
+        resultFormat="e4x"
+        method="POST"
+        result="handleFlagQuestion(event)"/>
+   	 <mx:Form defaultButton="{addButton}" width="600" height="69">
+   
+       <mx:HBox width="561">
+       
+        <mx:TextInput id="guess" text="" width="497" fontSize="14" color="#006102" fontWeight="bold"/>
+         <mx:Button id="addButton" label="Add" click="submitAnswer()" height="26" width="53"/>
+           
+        </mx:HBox>
+         </mx:Form>
+   	  <mx:Label text="{peoplePlaying}" fontFamily="Georgia" fontSize="12"/>
+       <mx:HBox width="412" height="50" visible="true">
+              <mx:Label text="Flag this question: " fontWeight="bold"/>
+              <mx:Button id="flagButton0" label="It doesn't make sense!" click="flagQuestion(1)" color="#BE0202"/>
+              <mx:Button id="flagButton1" label="It's irrelevant!" click="flagQuestion(2)" width="110" color="#BE0202"/>
+       </mx:HBox>
+       <mx:DataGrid width="598" height="400" id="resultGrid" dataProvider="{resultArray}" visible="{resultArray.length>0}">
+              <mx:columns>
+                     <mx:DataGridColumn headerText="Entry" dataField="answer" width="450"/>
+                     <mx:DataGridColumn headerText="Score" dataField="score"/>
+              </mx:columns>
+       </mx:DataGrid>
+
+
+    
+</mx:VBox>
+
+
+
