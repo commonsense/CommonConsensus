@@ -1,12 +1,8 @@
-% CommonConsensus Documentation 
-% Dustin Smith
-% Revised 26 Oct 2009
+# CommonConsensus Documentation 
 
-\newcommand{\cc}{\textsc{CommonConesnus}}
+## Getting up and running
 
-# Getting up and running
-
-There are two components to \cc: the *game client*, a Flash "swif" file, `CommonConsenus.swf`, and the *web server*, a collection of Python files using the [Django](http://djangoproject.com) web application framework.  All of the data is stored in a [SQLite](http://sqlite.org) database, which takes the form of the text file `common_consensus.db`. 
+There are two components to **CommonConsensus**: the *game client*, a Flash "swif" file, `CommonConsenus.swf`, and the *web server*, a collection of Python files using the [Django](http://djangoproject.com) web application framework.  All of the data is stored in a [SQLite](http://sqlite.org) database, which takes the form of the text file `common_consensus.db`. 
 
 To run the server, you will need:
 
@@ -28,28 +24,28 @@ If you plan on modifying the *client* binary (students in Henry's class don't ha
 The project is built using Flash Bulder 4 (previous versions were called *Flex* Builder).  You can obtain a trial version of this beta Eclipse-based IDE from [here](http://labs.adobe.com/technologies/flashbuilder4/).
 
 
-## Obtaining the source
+### Obtaining the source
 
 
-\cc\ is still in development stages, so I recommend that you obtain the latest code from the [bazaar](http://bazaar-vcs.org) repository, hosted on [launchpad](https://code.launchpad.net/commonconsensus), as opposed to downloading a static snapshot of the code in a current state.
+**CommonConsensus**\ is still in development stages, so I recommend that you obtain the latest code from the Git repository: 
+    
+    git clone git@github.com:commonsense/CommonConsensus.git
 
-    bzr branch lp:commonconsensus
+This will create a folder in your current directory with two subdirectories:
 
-This will create a folder `trunk` in your current directory with two subdirectories:
+     commonconsensus/
+                    /flexserver
+                    /game-client
 
-              trunk/
-                   /flexserver
-                   /game-client
+From within the root of the repository, you can always obtain the latest version (called the "head") of the source code by typing:
 
-From within the root of the repository, the `trunk` folder, you can always obtain the latest version (called the "head") of the source code by typing:
+    git pull
 
-    bzr pull
+### Configuring and running the server
 
-## Configuring and running the server
+Move into the `flexserver` directory (e.g., `cd commonconsensus/flexserver`). Many of the files in this directory are standard Django^[For a good tutorial about how to build an app in Django, go [here](http://docs.djangoproject.com/en/dev/intro/tutorial01/)] scripts: `manage.py`, `settings.py`, and `urls.py`.
 
-Move into the `flexserver` directory (e.g., `cd trunk/flexserver`). Many of the files in this directory are standard Django^[For a good tutorial about how to build an app in Django, go [here](http://docs.djangoproject.com/en/dev/intro/tutorial01/)] scripts: `manage.py`, `settings.py`, and `urls.py`.
-
-There is only one change you need to make before running the server, and this is in the `settings.py` file.  Open the file and change the value of the variable `BASE_DIR` to the full path to the \cc\ server directory. If you are on a Linux environment, this will be the path returned by the command `pwd` when executed in the same directory as the settings file.
+There is only one change you need to make before running the server, and this is in the `settings.py` file.  Open the file and change the value of the variable `BASE_DIR` to the full path to the **CommonConsensus**\ server directory. If you are on a Linux environment, this will be the path returned by the command `pwd` when executed in the same directory as the settings file.
 
 After you have updated the `BASE_DIR` variable, you can launch the Python server by typing:
 
@@ -65,7 +61,7 @@ If you want others to be able to access your site or want to host on another por
 
     python manage.py runserver xoth.media.mit.edu:80
 
-Will launch \cc\ on `http://xoth.media.mit.edu`.   **Note:** if you run \cc\ on a port different from 8000 or on a server other than your local machine, you will need to specify this in the client by editing the `BASE_URL` variable in the file `game-client/commonconsensus/util/Settings.as` and recompiling.
+Will launch **CommonConsensus**\ on `http://xoth.media.mit.edu`.   **Note:** if you run **CommonConsensus** on a port different from 8000 or on a server other than your local machine, you will need to specify this in the client by editing the `BASE_URL` variable in the file `game-client/commonconsensus/util/Settings.as` and recompiling.
 
 
 # Modifying CommonConsensus
