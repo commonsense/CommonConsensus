@@ -120,4 +120,24 @@ To see the structure for all of the tables.   You can execute arbitrary SQL comm
 
 # Future Directions
 
+Several promising directions came out of a discussion with folks at SLB.
+ 
+ - enlarge the answer panel
+ - enlarge font for answers
+ - sort answers by score/name
+ - focus on the text entry automatically
+ - different colors for changed answers (?)
+ - remember who added the answers (for credit, blame)
+ - better visualizations of results, or real time visualization of answer panels
+ - report on server load
+ - spell checking
+ - shorten the answer phase (?)
+ - clear lingering charts after game
+
+## Open Problems to consider 
+
+ 1. What if the user wants to "pass" on the answer?  Should this be an option, is there another game or question they can advance to -- perhaps by spawning a single player mode.
+ 2. How to encourage social interactions?  Other ways for users to cultivate a digital identity and interact with other players.
+ 3. What is the ideal duration?
+ 4. How to handle questions with only one answer?
 
