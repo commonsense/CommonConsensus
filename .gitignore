@@ -1,2 +1,5 @@
 .svn
 .bzr
+.pyc
+.*~
+.egg

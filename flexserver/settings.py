@@ -2,7 +2,7 @@
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-BASE_DIR= '/Users/dustin/Documents/Projects/CC/flexserver'
+BASE_DIR= '/Users/dustin/Documents/Projects/CommonConsensus/flexserver'
 
 ADMINS = (
      ('Replace Me', 'withyour@email.com'),
