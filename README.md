@@ -9,11 +9,11 @@ To run the server, you will need:
   - Python 2.6+ (uses JSON library)
   - Django 1.0+
   - SQLite 3
-  - Bazaar client, to obtain the latest code
+  - Git, optionally, if you want to push changes back to GitHub.
 
 On Debian-based machines, this should be as simple as issuing the command:
 
-    sudo apt-get install bazaar python-django python-sqlite sqlite3
+    sudo apt-get install python-django python-sqlite sqlite3
 
 For other platforms, if you already have `python` and `python-setuptools` installed, you should be able to install `bzr` and `django` using `easy_install`.  
 
