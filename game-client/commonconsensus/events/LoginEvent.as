@@ -1,6 +1,6 @@
 package commonconsensus.events {
-    import com.adobe.serialization.json.JSON;
-	import com.adobe.serialization.json.JSONDecoder;
+    //import com.adobe.serialization.json.JSON;
+	//import com.adobe.serialization.json.JSONDecoder;
     
     import flash.events.Event;
     
@@ -13,9 +13,9 @@ package commonconsensus.events {
 		
         public function LoginEvent(result:String) {
             super(LOGIN, true);
-			var o:Object = JSON.decode(result) as Object;
+			var o:Object = JSON.parse(result);
             this.user = o.user;// JSON.decode(o.user) as Object;
-            this.game = JSON.decode(o.game) as Object;
+            this.game = o.game;
  
         }
     }

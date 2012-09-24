@@ -1,6 +1,5 @@
 package commonconsensus.events {
     import flash.events.Event;
-    import com.adobe.serialization.json.JSON;
     
     public class FlagQuestionEvent extends Event {
         public static const FLAG_QUESTION:String = "flagQuestion";
@@ -12,7 +11,7 @@ package commonconsensus.events {
         public function FlagQuestionEvent(result:Object) {
             super(FLAG_QUESTION, true);
 			CommonConsensus.debug("in flag question event, result[score]"+result.game);
-            this.game = JSON.decode(""+result.game) as Object;
+            this.game = JSON.parse(""+result.game) as Object;
             CommonConsensus.debug("in flag question event, result[score]"+this.game);
             this.score = result.score; //JSON.decode(""+result.score) as Object;
         }

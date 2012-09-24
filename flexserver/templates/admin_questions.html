@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block includes %}
+<script src="/js/chosen.jquery.min.js"></script>
+<link href="/css/chosen.css" rel="stylesheet">
+
+<script type="text/javascript">
+
+  $(document).ready(function() {
+
+   // enable chosen
+   $(".js-concept-type-select").chosen();
+
+});
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+<h2>Question Templates</h2>
+
+<form action="/delete_by_key/" method="POST">
+<input type="hidden" name="return" value="/question-template">
+<table class="table table-hover">
+  <thead>
+  <tr>
+      <th> </th>
+      <th> Question </th>
+      <th> Answer Type </th>
+      <th> Predicate </th>
+  </tr>
+  </thead>
+  {% for template in question_templates %}
+  <tr>
+          <td> <input type="checkbox" name="entry" value="{{template.key.urlsafe()}}"> </td>
+          <td> {{ template.question }} </td>
+          <td> {{ template.answer_type }}  </td>
+          <td> <code>{{ template.predicate_name }}/{{template.arity()}}</code></td>
+  </tr>
+  {% endfor %}
+</table>
+
+<div class="btn-group">
+        <button class="btn btn-danger" name="Delete">Delete</button> &nbsp;
+        <a href="#js-question-template-add" role="button" class="btn btn-primary" data-toggle="modal">Add Question Template</a>
+</form>
+</div>
+
+
+<div class="modal hide" id="js-question-template-add" aria-labelledby="js-question-template-add-label">
+      <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 id="js-question-template-add-label">Add a question-template</h3>
+      </div>
+      <form action="/question-template/" method="POST">
+      <div class="modal-body">
+           <label>Question:</label>
+           <textarea rows="3" style="width:400px;" name="question"  placeholder="What is another name for [concept]?"></textarea>
+           <label>Answer Type:</label>
+           <select name="answer_type" data-placeholder="Concept Type for Answer" class="js-concept-type-select" style="width:350px;" tabindex="-1">
+            {% for concept_type in concept_types %}
+              <option value="{{concept_type}}">{{concept_type}}</option>
+            {% endfor %}
+           </select>
+           <label>Predicate Name:</label>
+           <input type="text" name="predicate" placeholder="synonym">
+      </div>
+      <div class="modal-footer">
+          <a href="#" data-dismiss="modal" class="btn">Cancel</a>
+          <input type="submit" name="submit" class="btn btn-primary" value="Add Question Template">
+      </div>
+      </form>
+</div>
+
+{% endblock content %}

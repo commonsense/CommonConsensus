@@ -1,0 +1,26 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Games</h2>
+
+<table class="table">
+<thead>
+  <tr>
+          <th> Name </th>
+          <th> Created </th>
+  </tr>
+</thead>
+{% for game in games %}
+  <tr>
+          <td> {{ game.question_string|safe }} </td>
+          <td> {{ game }} </td>
+  </tr>
+{% endfor %}
+</table>
+<div class="btn-group">
+        <a href="/game/create" role="button" class="btn btn-primary" data-toggle="modal">Generate New Game</a>
+</div>
+
+{% endblock content %}

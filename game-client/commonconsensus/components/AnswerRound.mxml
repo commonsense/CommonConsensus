@@ -4,7 +4,7 @@
 
 <mx:Script>
 	<![CDATA[
-		import com.adobe.serialization.json.JSON;
+		//import com.adobe.serialization.json.JSON;
 		
 		import commonconsensus.util.Settings;
 		
@@ -38,7 +38,7 @@
 	  private function handleFinalScore(event:ResultEvent):void {
     	
 		CommonConsensus.debug("handleFinalScore() response: "+event.result.toString());
-		var finalObj:Object = JSON.decode(event.result.toString()) as Object;
+		var finalObj:Object = JSON.parse(event.result.toString()) as Object;
 		points =finalObj.score.points;
 
        	other_users = finalObj.score.other_users;
@@ -46,15 +46,15 @@
 		var str:String=finalObj.score.top_users;
 		CommonConsensus.debug("Points: "+points);
 		var sty:String=finalObj.score.all_answers;
-		CommonConsensus.debug("answers1: "+(JSON.decode(str) as ArrayCollection));	
+		CommonConsensus.debug("answers1: "+(JSON.parse(str) as ArrayCollection));	
 		top_user.removeAll();
 		all_answer.removeAll();
-		for each ( var ite:Object in JSON.decode(str)){
+		for each ( var ite:Object in JSON.parse(str)){
 			CommonConsensus.debug("person: "+ite.login+"  score: "+ite.score);
 			top_user.addItem(Object(ite));
 			trace(ite);
 		}
-		for each ( var it:Object in JSON.decode(sty)){
+		for each ( var it:Object in JSON.parse(sty)){
 			CommonConsensus.debug("person: "+it.answer+"  score: "+it.score);
 			all_answer.addItem(Object(it));
 			trace(it);

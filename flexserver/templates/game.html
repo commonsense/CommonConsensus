@@ -1,33 +1,15 @@
-<!-- saved from url=(0014)about:internet -->
-<html lang="en">
 
-<!-- 
-Smart developers always View Source. 
+{% extends "base.html" %}
 
-This application was built using Adobe Flex, an open source framework
-for building rich Internet applications that get delivered via the
-Flash Player or to desktops via Adobe AIR. 
 
-Learn more about Flex at http://flex.org 
-// -->
+{% block includes %}
+<link rel="stylesheet" type="text/css" href="css/history.css" />
+<script src="js/AC_OETags.js" language="javascript"></script>
+<script src="js/history.js" language="javascript"></script>
 
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-<!--  BEGIN Browser History required section -->
-<link rel="stylesheet" type="text/css" href="history/history.css" />
-<!--  END Browser History required section -->
 
-<title></title>
-<script src="AC_OETags.js" language="javascript"></script>
 
-<!--  BEGIN Browser History required section -->
-<script src="history/history.js" language="javascript"></script>
-<!--  END Browser History required section -->
-
-<style>
-body { margin: 0px; overflow:hidden }
-</style>
 <script language="JavaScript" type="text/javascript">
 <!--
 // -----------------------------------------------------------------------------
@@ -41,9 +23,14 @@ var requiredRevision = 0;
 // -----------------------------------------------------------------------------
 // -->
 </script>
-</head>
+{% endblock includes %}
 
-<body scroll="no">
+
+
+{% block content %}
+</div>
+
+<div style="height:1000px; text-align:center;">
 <script language="JavaScript" type="text/javascript">
 <!--
 // Version check for the Flash Player that has the ability to start Player Product Install (6.0r65)
@@ -117,5 +104,5 @@ if ( hasProductInstall && !hasRequestedVersion ) {
 			</embed>
 	</object>
 </noscript>
-</body>
-</html>
+</div>
+{% endblock content %}

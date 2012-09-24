@@ -7,7 +7,7 @@
 		<![CDATA[
 			import mx.events.CollectionEvent;
 			import mx.collections.ArrayCollection;
-		    import com.adobe.serialization.json.JSON;
+		    //import com.adobe.serialization.json.JSON;
 			import commonconsensus.events.FlagQuestionEvent;
 			import commonconsensus.util.Settings;
 
@@ -34,11 +34,11 @@
     		import commonconsensus.events.LoginEvent;
 
     		private function submitAnswer():void {
-    			CommonConsensus.debug("user id: " +user.toString());
+    			CommonConsensus.debug("user: " +user.toString());
     			if (this.guess.text != "") {	
-        		svnSubmitAnswer.send({user_id: user.id.toString(), 
-        						  concept_id: game.concept_id.toString(),
-        						  relation_type_id: game.relation_type_id.toString(),
+        		svnSubmitAnswer.send({user: user.key.toString(), 
+        						  concept: game.concept.toString(),
+        						  relation_type_id: game.relation_type.toString(),
         						  answer: this.guess.text});
        			
         		this.guess.text = "";
@@ -54,14 +54,14 @@
 			private function handleFlagQuestion(event:ResultEvent):void {
 		        var result:Object = event.result;
 		        CommonConsensus.debug("Dispatching flag question Event"+ result.toString());
-		        var obj:Object = JSON.decode(result.toString()) as Object;
+		        var obj:Object = JSON.parse(result.toString()) as Object;
 		        dispatchEvent(new FlagQuestionEvent(obj));
 		    }
 		    
 		    
 		    private function handleAnswer(event:ResultEvent):void {
 		    	//CommonConsensus.debug("Result in handle answer "+JSON.decode(event.result.toString()));
-		        var result:Object = JSON.decode(event.result.toString());
+		        var result:Object = JSON.parse(event.result.toString());
 		        resultArray.removeAll();
 				for each ( var ite:Object in result.scores){
 					resultArray.addItem(Object(ite));

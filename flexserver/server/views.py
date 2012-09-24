@@ -311,7 +311,6 @@ def singleplayer_new_game_query():
       new_answer.save() 
     return [concept,relation_type]
 
-
 def start_new_game():
     # Starts a new game,
     # New game is either multiplayer or single player depending on

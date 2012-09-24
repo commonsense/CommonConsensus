@@ -2,7 +2,7 @@
 # requires mxmlc to be in path  ( type 'locate mxmlc')
 #
 
-MXML_DIR = "/Applications/Adobe Flash Builder Beta 2/sdks/3.4.1/bin/"
+MXML_DIR = "/Applications/Adobe Flash Builder 4.7/sdks/3.6.0/bin/"
 LICENSE_ARG = #"-license=flexbuilder3,0000000000000000000000"
 
 make: CommonConsensus.mxml commonconsenus/*/*.mxml commonconsenus/**/*.as

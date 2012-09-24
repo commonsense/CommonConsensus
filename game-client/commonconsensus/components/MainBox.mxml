@@ -8,8 +8,9 @@
 	horizontalScrollPolicy="off" verticalScrollPolicy="off"
     height="100%"
 	color="#000000" 
-	themeColor="#636363" 
-	creationComplete="handleCreationComplete()" paddingTop="5" borderThicknessTop="0" headerHeight="5">
+	creationComplete="handleCreationComplete()"
+	paddingTop="5" 
+	headerHeight="5">
 	
 	
 <mx:Script>
@@ -20,7 +21,7 @@
     import mx.collections.XMLListCollection;
     
 	
-	import com.adobe.serialization.json.JSON;
+	//import com.adobe.serialization.json.JSON;
     import flash.utils.Timer;		
     import flash.events.TimerEvent;
   	import commonconsensus.events.FlagQuestionEvent;  
@@ -99,7 +100,7 @@
       		questionRoundView.game = game;
       		answerRoundView.question = game.question;
       		//CommonConsensus.debug("Color: "+ (game.relation_type_id % colors.length));
-      		questionRoundView.bgColor = colors[game.relation_type_id % colors.length];
+      		questionRoundView.bgColor = colors[game.relation_type % colors.length];
       		
       		//CommonConsensus.debug("newGameSetup "+game.question);
   		}
@@ -107,8 +108,8 @@
 
     private function handleCheckup(event:ResultEvent):void {
     	//CommonConsensus.debug("handleCheckup(): "+event.result.toString());	
-    	var result:Object = JSON.decode(event.result.toString()) as Object;
-        var new_game:Object = JSON.decode(""+result.game) as Object;
+    	var result:Object = JSON.parse(event.result.toString());// as Object;
+        var new_game:Object = JSON.parse(""+result.game);// as Object;
 
         if (new_game.start != game.start) {
         	// new game starting

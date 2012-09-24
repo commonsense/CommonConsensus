@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block includes %}
+<script src="/js/chosen.jquery.min.js"></script>
+<link href="/css/chosen.css" rel="stylesheet">
+
+
+<script type="text/javascript">
+
+  $(document).ready(function() {
+
+   // enable chosen
+   $(".js-concept-type-multi-select").chosen();
+
+   // concept type add quick popup 
+   $(".js-concept-type-add").click( function(e) {
+           var concept_key = $(this).data('concept-key');
+           var concept_name = $(this).data('concept-name');
+           var parent = $(this).parent();
+           var concept_type = prompt("What type would you like to add to "+concept_name);
+           
+           if (!concept_type ) {
+              // cancelled or empty string submitted
+              return
+           }
+           $.ajax({
+              type: 'POST',
+              url: "/concept/" + concept_key + "/concept_type",
+              data: {'concept_type': concept_type},
+              success: 
+                  function(data) {
+                    if (data == "OK") {
+                       parent.html(concept_type+ ", " + parent.html());
+                    } else {
+                       alert(data);
+                    }
+                  }
+            });
+   });
+
+
+});
+</script>
+
+{% endblock %}
+
+{% block content %}
+
+
+
+<h2>Concepts</h2>
+<form action="/delete_by_key/" method="POST">
+<input type="hidden" name="return" value="/concept">
+
+<table class="table table-hover">
+  <thead>
+  <tr>
+      <th></th>
+      <th> Name </th>
+      <th> Types </th>
+  </tr>
+  </thead>
+  {% for concept in concepts %}
+  <tr>
+      <td> <input type="checkbox" name="entry" value="{{concept.key.urlsafe()}}"> </td>
+      <td> {{ concept.name }} </td>
+      <td> {{ concept.concept_types|join(", ") }} 
+              <span class="label label-info js-concept-type-add" 
+                    data-concept-name="{{concept.name}}"
+                    data-concept-key="{{concept.key.urlsafe()}}">Add</span>
+      </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<div class="btn-group">
+        <button class="btn btn-danger" name="Delete">Delete</button> &nbsp;
+        <a href="#js-concept-add" role="button" class="btn btn-primary" data-toggle="modal">Add Concept</a>
+</div>
+</form>
+
+
+<div class="modal hide" id="js-concept-add" aria-labelledby="js-concept-add-label">
+      <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3 id="js-concept-add-label">Add a concept</h3>
+      </div>
+      <form action="/concept/" method="POST">
+      <div class="modal-body">
+           <label>Concept Name:</label>
+           <input type="text" name="name">
+           <label>Concept Types:</label>
+           <select name="concept_types" class="js-concept-type-multi-select" multiple style="width:350px;" tabindex="3">
+            {% for concept_type in concept_types %}
+              <option value="{{concept_type}}">{{concept_type}}</option>
+            {% endfor %}
+           </select>
+      </div>
+      <div class="modal-footer">
+          <a href="#" data-dismiss="modal" class="btn">Cancel</a>
+          <input type="submit" name="submit" class="btn btn-primary" value="Add Concept">
+      </div>
+      </form>
+</div>
+{% endblock content %}

@@ -22,6 +22,7 @@
     private function handleAccountLoginResult(
     event:ResultEvent):void {
         var result:Object = event.result;
+		CommonConsensus.debug(result.toString());
         if (result == "badlogin") {
             Alert.show("The username or password is wrong.",
                 "Login Error");

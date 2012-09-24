@@ -16,7 +16,7 @@
 ]]>
 </mx:Script>
     <mx:VBox width="100%" horizontalAlign="center" fontSize="15">
-        <mx:Image source="/cclogo.jpg" />
+        <mx:Image source="{Settings.BASE_URL}/img/logo.gif" />
         <mx:Spacer height="10"/>
         <mx:Spacer height="10"/>
         <mx:Accordion width="600" height="373">
