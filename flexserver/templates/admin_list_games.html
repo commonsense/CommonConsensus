@@ -5,10 +5,11 @@
 
 <h2>Games</h2>
 
+{#
 {{ current_game.status("test") }}
 {{ current_game.answers }}
 {{ current_game.question_string }}
-
+#}
 <form action="/delete_by_key/" method="POST">
 <input type="hidden" name="return" value="/game">
 
@@ -17,15 +18,15 @@
         <tr>
           <th>  </th>
           <th> Name </th>
-          <th> Created </th>
-          <th> Created </th>
+          <th> Times Played </th>
+          <th> Seconds since played</th>
   </tr>
 </thead>
 {% for game in games %}
   <tr>
           <td> <input type="checkbox" name="entry" value="{{game.key.urlsafe()}}"> </td>
           <td> {{ game.question_string|safe }} </td>
-          <td> {{ game }} </td>
+          <td> {{ game.times_played }} </td>
           <td> {{ game.duration() }} </td>
   </tr>
 {% endfor %}

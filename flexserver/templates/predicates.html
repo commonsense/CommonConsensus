@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block includes %}
+
+{% endblock %}
+
+{% block content %}
+
+
+<h2>Predicates</h2>
+<input type="hidden" name="return" value="/player">
+<table class="table table-striped">
+  <thead>
+  <tr>
+      <th> Predicate </th>
+      <th> Frequency </th>
+  </tr>
+  </thead>
+  {% for predicate in predicates %}
+  <tr>
+          <td> {{ predicate.fancy_form() }} </td>
+          <td> {{ predicate.frequency }} </td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock content %}

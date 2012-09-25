@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block includes %}
+
+{% endblock %}
+
+{% block content %}
+
+
+
+<h2>All-time Top Players</h2>
+<input type="hidden" name="return" value="/player">
+<table class="table table-striped">
+  <thead>
+  <tr>
+      <th> Rank </th>
+      <th> Name </th>
+      <th> Score </th>
+  </tr>
+  </thead>
+  {% for player in players %}
+  <tr{%if loop.index == 1 %} class="warning"{%endif%}>
+      <td> {{ loop.index }} </td>
+      <td> {{ player.username }} </td>
+      <td> {{ player.score }} </td>
+  </tr>
+  {% endfor %}
+</table>
+
+{% endblock content %}
