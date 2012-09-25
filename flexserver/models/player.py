@@ -192,7 +192,7 @@ class Game(ndb.Model):
 
     # class variables
     GAME_DURATION = 35
-    ANSWER_DURATION = 10
+    ANSWER_DURATION = 11
     GAME_COLORS =[0x3B5959, 0x7F8CF1, 0xF2F2E9, 0xD9C4B8, 0xBF6363, 0x044E7F, 0x75B809, 0x117820, 0xFFE240]
 
     # model components
@@ -390,13 +390,15 @@ class Game(ndb.Model):
         """
         Adds an answer as a child to the game instance
         """
+        """
         if not self.is_dirty and self.cached_status:
             if answer in self.cached_status['answers_by_players']:
                 return
         else:
-            for a in self.answers:
-                if a.player_key == player_key and a.answer == answer:
-                    return
+        """
+        for a in self.answers:
+            if a.player_key == player_key and a.answer == answer:
+                return
 
         if not player_name in self.players:
             self.players.append(player_name)

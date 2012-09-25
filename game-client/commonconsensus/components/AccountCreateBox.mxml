@@ -2,46 +2,25 @@
 <mx:VBox xmlns:mx="http://www.adobe.com/2006/mxml"
     xmlns:cpv="commonconsensus.validators.*"
     width="100%" height="100%" label="Create Account">
-<mx:Metadata>
-    [Event(name="accountCreate",
-           type="commonconsensus.events.AccountCreateEvent")]
-</mx:Metadata>
 <mx:Script>
 <![CDATA[
     import mx.controls.Alert;
-    import mx.events.ValidationResultEvent;
     import mx.rpc.events.ResultEvent;
     import mx.validators.Validator;
-    import commonconsensus.events.AccountCreateEvent;
     import commonconsensus.validators.ServerErrors;
 	import commonconsensus.util.Settings;
-    import com.adobe.serialization.json.JSON;
 	
     [Bindable]
     private var _serverErrors:ServerErrors; //used in the form validation
 
-    private function handleAccountCreateResult(
-    event:ResultEvent):void {
-        CommonConsensus.debug(
-            "AccountCreateBox#handleAccountCreateResult");
-        if (event.result.toString() == "error") {
-		
-            Alert.show("Your account was not created.",
-                "Error");
-        } else {
-			CommonConsensus.debug("here");
-			CommonConsensus.debug(event.result.toString());
-            //CommonConsensus.debug(result.toString());
-            /*if (resultXML.name().localName == "errors") {
-                Alert.show(
-                    "Please correct the validation errors " +
-                    "highlighted on the form.",
-                    "Account Not Created");
-                _serverErrors = new ServerErrors(resultXML);
-			*/
- 			
-               dispatchEvent(new AccountCreateEvent(event.result.toString()));
-      
+    private function handleAccountCreateResult(event:ResultEvent):void {
+		var result:Object = JSON.parse(event.result.toString());
+		CommonConsensus.debug(result.toString());
+		if ('error' in result) {
+			Alert.show(result.error.toString(),
+				"Login Error");
+		} else {
+			dispatchEvent(new ResultEvent("accountCreate", true, true, event.result));
        }
     }
 

@@ -5,13 +5,12 @@
     width="100%" height="100%">
 <mx:Metadata>
     [Event(name="accountCreate",
-           type="commonconsensus.events.AccountCreateEvent")]
-    [Event(name="login", type="commonconsensus.events.LoginEvent")]
+           type="mx.rpc.events.ResultEvent")]
+    [Event(name="login", type="mx.rpc.events.ResultEvent")]
 </mx:Metadata>
 <mx:Script>
 <![CDATA[
-    import commonconsensus.events.AccountCreateEvent;
-    import commonconsensus.events.LoginEvent;
+	import mx.rpc.events.ResultEvent;
 	import commonconsensus.util.Settings;
 ]]>
 </mx:Script>

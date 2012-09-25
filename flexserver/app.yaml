@@ -24,9 +24,9 @@ handlers:
   static_files: static/\1
   upload: static/(.*)
 
-- url: (.*swf$)
-  static_files: static/\1
-  upload: static/(.*swf$)
+- url: /CommonConsensus.swf
+  static_files: static/CommonConsensus.swf
+  upload: static/CommonConsensus.swf
 
 - url: /js
   static_dir: static/js

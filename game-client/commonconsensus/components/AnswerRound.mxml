@@ -108,8 +108,8 @@
     />
 
 	<mx:Text x="33.5" y="29" id="scoreText0" fontFamily="Georgia" fontSize="20" color="#FFFFFF" height="30" width="666"/>
-	<mx:Text x="33.5" y="557" id="scoreText1" text="You have scored {points} points with {other_users} people playing." fontFamily="Georgia" fontSize="20" color="#343434" height="53"/>
-	<mx:Text x="475.5" y="67" id="scoreText2" text="All time top scores:&#xd;" fontFamily="Georgia" fontSize="20" color="#082A58"/>
+	<mx:Text x="33.5" y="557" id="scoreText1" text="You have scored {points} points with {other_users} people playing.  Your total score: {total_score}" fontFamily="Georgia" fontSize="20" color="#343434" height="53"/>
+	<mx:Text x="475.5" y="67" id="scoreText2" text="Player scores:" fontFamily="Georgia" fontSize="20" color="#082A58"/>
 	<mx:Text x="131.5" y="67" id="scoreText3" text="Answers this round:" fontFamily="Georgia" fontSize="20" color="#082A58"/>
 	<mx:PieChart id="pieChart0"
 	    textAlign="left" 

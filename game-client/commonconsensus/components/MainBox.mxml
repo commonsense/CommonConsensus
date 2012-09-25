@@ -26,7 +26,7 @@
     import commonconsensus.events.FlagQuestionEvent;
     import commonconsensus.util.Settings;
     	
-	public const SECONDS_FOR_ANSWER:uint = 10;		
+	public const SECONDS_FOR_ANSWER:uint = 8;		
 	public const GAME_LENGTH:uint = 35;
     private var _timer:Timer = new Timer(1000);  //msec
     
@@ -93,7 +93,9 @@
 	
 		if (game.question.toString() != "RESTART") {
 		
-			_timeLeft= (uint(game.game_start)+GAME_LENGTH)-uint(game.server_time);
+			var start:uint = Date.parse(game.game_start.toString());
+			var now:uint = Date.parse(game.server_time.toString());
+			_timeLeft = (start + (GAME_LENGTH*1000) - now) / 1000
         	questionRoundView.resultArray = new ArrayCollection();
       		this.mainViewStack.selectedIndex = 0;
       		questionRoundView.game = game;
@@ -123,15 +125,12 @@
         	}
         } else {
 			// existing game
-        	//CommonConsensus.debug("in mainbox "+event.result.toString())
 			
-			
-			var start:Date = DateUtil.parseW3CDTF(result.game.game_start.toString());
-			var now:Date = DateUtil.parseW3CDTF(result.game.server_time.toString());
-			
-			CommonConsensus.debug("TIME LEFT"+_timeLeft);
-			CommonConsensus.debug("NOW"+now);	
-			CommonConsensus.debug("SERVER TIME"+start);	
+			// synchronize time left
+			var start:uint = Date.parse(result.game.game_start.toString());
+			var now:uint = Date.parse(result.game.server_time.toString());
+			_timeLeft = (start + (GAME_LENGTH*1000) - now) / 1000
+		
         	var resultArray:ArrayCollection=new ArrayCollection()
 			for (var answer:String in result.counts) {
 				resultArray.addItem({answer: answer, count: result.counts[answer]});

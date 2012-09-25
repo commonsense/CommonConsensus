@@ -53,13 +53,14 @@ def get_current_game():
     return game
 
 def get_current_game_object():
+    timeformat = "%a %b %d %H:%M:%S %Y"
     game = get_current_game()
     game_object = {}
     game_object['background_color'] =  game.background_color
     game_object['key'] = game.key.urlsafe()
     game_object['players'] = game.players
-    game_object['server_time'] = datetime.datetime.now().isoformat()
-    game_object['game_start'] = game.started_at.isoformat()
+    game_object['server_time'] = datetime.datetime.now().strftime(timeformat)
+    game_object['game_start'] = game.started_at.strftime(timeformat)
     game_object['question'] = game.question_string.encode('ascii', 'ignore').replace("<b>","").replace("</b>", "")
 
     return game_object
@@ -292,9 +293,7 @@ def create_user_account(request):
     """
     Create the user's account
     """
-    logging.error(request.POST)
-    existing_player = Player.query(ndb.AND(Player.username==request.POST['login'],
-                      Player.password==request.POST['password'])).get()
+    existing_player = Player.query(Player.username==request.POST['login']).get()
     if not existing_player:
         # if the user name is unique
         player = Player(username=request.POST['login'],
@@ -318,15 +317,17 @@ def login_route(request):
     username = request.POST['login']
     password = request.POST['password']
 
-    player = Player.query(ndb.AND(Player.username==username,
-                 Player.password==password)).get()
+    player = Player.query(Player.username==username).get()
     
     if player:
-        # login successful
-        return app.render_json({'user': player.to_json(),
-                                'game': get_current_game_object()})
+        if player.password == password:
+            # login successful
+            return app.render_json({'user': player.to_json(),
+                                    'game': get_current_game_object()})
+        else:
+            return app.render_json({"error": "Bad password"})
     else:
-        return app.render_json({"error": "login failed"})
+        return app.render_json({"error": "No player with username '%s' could be found." % (username)})
 
 #==============================================================================
 #  Main UI Routes 

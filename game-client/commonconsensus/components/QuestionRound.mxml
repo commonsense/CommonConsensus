@@ -29,9 +29,7 @@
 			[Bindable]
 			public var resultArray:ArrayCollection;// = new ArrayCollection();
 			
-		    import mx.controls.Alert;
     		import mx.rpc.events.ResultEvent;
-    		import commonconsensus.events.LoginEvent;
 
     		private function submitAnswer():void {
     			if (this.guess.text != "") {	
