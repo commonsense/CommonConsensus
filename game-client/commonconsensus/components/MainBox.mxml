@@ -15,20 +15,19 @@
 	
 <mx:Script>
 <![CDATA[
-    import mx.rpc.events.ResultEvent;
-    import mx.collections.ArrayCollection;
-    import mx.collections.IViewCursor;
-    import mx.collections.XMLListCollection;
+    import com.adobe.utils.DateUtil;
     
-	
-	//import com.adobe.serialization.json.JSON;
-    import flash.utils.Timer;		
     import flash.events.TimerEvent;
-  	import commonconsensus.events.FlagQuestionEvent;  
-	import commonconsensus.util.Settings;
+    import flash.utils.Timer;
+    
+    import mx.collections.ArrayCollection;
+    import mx.rpc.events.ResultEvent;
+    
+    import commonconsensus.events.FlagQuestionEvent;
+    import commonconsensus.util.Settings;
     	
-	public const SECONDS_FOR_ANSWER:uint = 5;		
-	public const GAME_LENGTH:uint = 26;
+	public const SECONDS_FOR_ANSWER:uint = 10;		
+	public const GAME_LENGTH:uint = 35;
     private var _timer:Timer = new Timer(1000);  //msec
     
     
@@ -41,9 +40,7 @@
 	[Bindable]
 	private var _timeLeft:int;
 	
-	//url="http://xoth.media.mit.edu:3000/checkup.xml"
-	private var colors:Array =  [0x3B5959, 0x7F8CF1, 0xF2F2E9, 0xD9C4B8, 0xBF6363, 0x044E7F, 0x75B809, 0x117820, 0xFFE240];
-	
+
 
 	public function handleCreationComplete():void {
 	
@@ -60,14 +57,18 @@
 		//CommonConsensus.debug("Update Time Left: "+_timeLeft);
 		if (_timeLeft > SECONDS_FOR_ANSWER) {
 			// question round
-			if (_timeLeft%3 == 0) {
-				svcCheckup.send();
+			if (_timeLeft%5 == 0) {
+				svcCheckup.send({username: user.username.toString(),
+					user_key: user.key.toString(),
+					game_key: game.key.toString()});
 			}
 			questionRoundView.timeLeft = _timeLeft-SECONDS_FOR_ANSWER;
 			this.mainViewStack.selectedIndex = 0;
 		} else  if (_timeLeft < 0) {
 			// network delay -- keep trying.
-			svcCheckup.send();
+			svcCheckup.send({username: user.username.toString(),
+				user_key: user.key.toString(),
+				game_key: game.key.toString()});
 			
 		} else {
 			// answer round
@@ -89,64 +90,71 @@
 			answerRoundView.scoreText1.visible=false;
 			answerRoundView.scoreText2.visible=false;
 		}
-		//CommonConsensus.debug("Color: "+ (game.relation_type_id % colors.length));
+	
 		if (game.question.toString() != "RESTART") {
-			//CommonConsensus.debug("in if for restarting: ");
-			//CommonConsensus.debug("Question within main box: "+game["question"].toString());
-			//CommonConsensus.debug("set up new game: "+(uint(game.start)-uint(game.now)));
-			_timeLeft= (uint(game.start)+GAME_LENGTH)-uint(game["now"]);
+		
+			_timeLeft= (uint(game.game_start)+GAME_LENGTH)-uint(game.server_time);
         	questionRoundView.resultArray = new ArrayCollection();
       		this.mainViewStack.selectedIndex = 0;
       		questionRoundView.game = game;
       		answerRoundView.question = game.question;
-      		//CommonConsensus.debug("Color: "+ (game.relation_type_id % colors.length));
-      		questionRoundView.bgColor = colors[game.relation_type % colors.length];
-      		
-      		//CommonConsensus.debug("newGameSetup "+game.question);
+      		questionRoundView.bgColor = game.background_color;
   		}
 	}
 
     private function handleCheckup(event:ResultEvent):void {
-    	//CommonConsensus.debug("handleCheckup(): "+event.result.toString());	
-    	var result:Object = JSON.parse(event.result.toString());// as Object;
-        var new_game:Object = JSON.parse(""+result.game);// as Object;
 
-        if (new_game.start != game.start) {
+    	CommonConsensus.debug("handleCheckup(): "+event.result.toString());	
+    	var result:Object = JSON.parse(event.result.toString());
+
+        var new_game:Object = result.game;// as Object;
+		
+		
+        if (new_game.game_start != game.game_start) {
         	// new game starting
         	if (new_game.question.toString() == "RESTART") {
         		questionRoundView.game.question = "<i>Retrieving next question...</i>";
-        		svcCheckup.send();
+        		svcCheckup.send({username: user.username.toString(),
+					user_key: user.key.toString(),
+					game_key: game.key.toString()});
         	} else {
         		game = new_game;
         		setUpNewGame();
         	}
         } else {
-        	// old game, continue with flag
+			// existing game
         	//CommonConsensus.debug("in mainbox "+event.result.toString())
-        	var resultAr:ArrayCollection=new ArrayCollection()
-		    for each ( var ite:Object in result.score.scores){
-					CommonConsensus.debug("answer: "+ite.answer+"  score: "+ite.score);
-					resultAr.addItem(Object(ite));
-					trace(ite);
+			
+			
+			var start:Date = DateUtil.parseW3CDTF(result.game.game_start.toString());
+			var now:Date = DateUtil.parseW3CDTF(result.game.server_time.toString());
+			
+			CommonConsensus.debug("TIME LEFT"+_timeLeft);
+			CommonConsensus.debug("NOW"+now);	
+			CommonConsensus.debug("SERVER TIME"+start);	
+        	var resultArray:ArrayCollection=new ArrayCollection()
+			for (var answer:String in result.counts) {
+				resultArray.addItem({answer: answer, count: result.counts[answer]});
 			}
-			CommonConsensus.debug("length of result array "+resultAr.length)
-        	questionRoundView.resultArray = resultAr;
-        	questionRoundView.peoplePlaying = result.score.people_playing.toString();
+			questionRoundView.resultArray = resultArray;
+        	questionRoundView.peoplePlaying = result.game.players.toString();
        }
+	
     }
 
 
 	private function handleFlagQuestion(event:FlagQuestionEvent):void {
         var new_game:Object = event.game;
-      	CommonConsensus.debug("handleFlagQuestion oldgame="+game["start"]+"  new-game="+new_game.start);
 
-        if (new_game.start != game.start) {
+        if (new_game.game_start != game.game_start) {
         	this.mainViewStack.selectedIndex=2;
         	// new game starting
         	CommonConsensus.debug("NEW GAME QUESTION = "+new_game.question.toString());
         	if (new_game.question.toString() == "RESTART") {
         		questionRoundView.game.question = "<i>Retrieving next question...</i>";
-        		svcCheckup.send();
+        		svcCheckup.send({username: user.username.toString(),
+					user_key: user.key.toString(),
+					game_key: game.key.toString()});
         	} else { 
         		game = new_game;
         		setUpNewGame();
@@ -165,11 +173,12 @@
         id="svcCheckup"
         url="{Settings.BASE_URL}/flexserver/checkup/"
         resultFormat="e4x"
+		method="POST"
         result="handleCheckup(event)"/>
 	
 	<mx:ViewStack id="mainViewStack" selectedIndex="0" width="800" height="600"  horizontalScrollPolicy="off" verticalScrollPolicy="off">
 		<cc:QuestionRound id="questionRoundView" game="{game}" user="{user}" timeLeft="{_timeLeft}" flagQuestion="handleFlagQuestion(event)" height="600"  horizontalScrollPolicy="off" verticalScrollPolicy="off"/>
-		<cc:AnswerRound id="answerRoundView"  horizontalScrollPolicy="off" verticalScrollPolicy="off"/>
+		<cc:AnswerRound id="answerRoundView" game="{game}" user="{user}" timeLeft="{_timeLeft}" horizontalScrollPolicy="off" verticalScrollPolicy="off"/>
 		<!--<cc:SwitchingGame id="switchingGameView"  horizontalScrollPolicy="off" verticalScrollPolicy="off"/>-->
 	</mx:ViewStack>
 

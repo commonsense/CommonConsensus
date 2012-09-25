@@ -18,7 +18,6 @@
     import commonconsensus.events.AccountCreateEvent;
     import commonconsensus.events.LoginEvent;
     import commonconsensus.util.DebugMessage;
-    import mx.collections.ArrayCollection;
 
     [Bindable]
     private var _user : Object;

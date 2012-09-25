@@ -6,11 +6,24 @@
 	<![CDATA[
 		//import com.adobe.serialization.json.JSON;
 		
-		import commonconsensus.util.Settings;
-		
 		import mx.collections.ArrayCollection;
 		import mx.rpc.events.ResultEvent;
+		
+		import commonconsensus.util.Settings;
 
+
+		[Bindable]
+		public var question:String;
+		
+		[Bindable]
+		public var game:Object;
+		
+		[Bindable]
+		public var user:Object;
+		
+		[Bindable]
+		public var timeLeft:int;
+		
 		[Bindable]
 		public var points:uint = 0;
 		
@@ -19,9 +32,7 @@
 		
 		[Bindable]
 		public var total_score:uint = 0;
-				
-		[Bindable]
-		public var question:String;
+		
 		
 		[Bindable]
 		public var top_user:ArrayCollection=new ArrayCollection();
@@ -31,33 +42,39 @@
 							
 				
 		public function updateScore():void {
-			CommonConsensus.debug("updating score");
-			svcGetFinalScore.send();
+			/* Sends a request to the server to get the final 
+			score stats */
+			svcGetFinalScore.send({username: user.username.toString(),
+				user_key: user.key.toString(),
+				game_key: game.key.toString()});
 		}
 	 
 	  private function handleFinalScore(event:ResultEvent):void {
     	
 		CommonConsensus.debug("handleFinalScore() response: "+event.result.toString());
-		var finalObj:Object = JSON.parse(event.result.toString()) as Object;
-		points =finalObj.score.points;
-
-       	other_users = finalObj.score.other_users;
-		CommonConsensus.debug("Points: "+points);
-		var str:String=finalObj.score.top_users;
-		CommonConsensus.debug("Points: "+points);
-		var sty:String=finalObj.score.all_answers;
-		CommonConsensus.debug("answers1: "+(JSON.parse(str) as ArrayCollection));	
+		var finalObj:Object = JSON.parse(event.result.toString());
+		
+		/* although it says "other players", we really mean total players */
+       	other_users = finalObj.game.players.length;
+		
+		
+		var player_scores:Object = finalObj.player_scores;
+		var all_scores:Object = finalObj.scores;
+	
+		total_score = finalObj.total_score;
+		points = finalObj.round_score;
+		
 		top_user.removeAll();
 		all_answer.removeAll();
-		for each ( var ite:Object in JSON.parse(str)){
-			CommonConsensus.debug("person: "+ite.login+"  score: "+ite.score);
-			top_user.addItem(Object(ite));
-			trace(ite);
+						
+		for (var player:String in player_scores) {
+			CommonConsensus.debug("person: "+player+"  score: "+player_scores[player]);
+			top_user.addItem({player: player, score: player_scores[player]});
 		}
-		for each ( var it:Object in JSON.parse(sty)){
-			CommonConsensus.debug("person: "+it.answer+"  score: "+it.score);
-			all_answer.addItem(Object(it));
-			trace(it);
+	
+		for ( var answer:String in all_scores){
+			CommonConsensus.debug("answer: "+answer+"  score: "+all_scores[answer]);
+			all_answer.addItem({answer: answer, score: all_scores[answer]});
 		}			
 		CommonConsensus.debug("Answers for this session: "+all_answer);
 		CommonConsensus.debug("Top users this sesssion : "+top_user);
@@ -71,7 +88,6 @@
 		scoreText1.visible=true;
 		scoreText2.visible=true;
 		
-		
 
     }
 		
@@ -82,6 +98,7 @@
         id="svcGetFinalScore"
         url="{Settings.BASE_URL}/flexserver/finalscore/"
         resultFormat="e4x"
+		method="POST"
         result="handleFinalScore(event)"/>
 	
 	    <mx:SeriesSlide 
@@ -119,10 +136,10 @@
                     <mx:CategoryAxis dataProvider="{top_user}" categoryField="Country"/>
                 </mx:horizontalAxis-->
         	<mx:verticalAxis>
-            		<mx:CategoryAxis categoryField="login" />
+            		<mx:CategoryAxis categoryField="player" />
        		</mx:verticalAxis>
         	<mx:series>
-            	<mx:BarSeries yField="login" xField="score" styleName="PCCSeries1" displayName="Points" color="red"/>
+            	<mx:BarSeries yField="player" xField="score" styleName="PCCSeries1" displayName="Points" color="red"/>
         	</mx:series>
     	</mx:BarChart>
 

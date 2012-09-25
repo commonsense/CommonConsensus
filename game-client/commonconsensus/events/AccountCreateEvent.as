@@ -11,9 +11,9 @@ package commonconsensus.events {
 		
         public function AccountCreateEvent(result:String) {
             super(ACCOUNT_CREATE, true);
-			var o:Object = JSON.parse(result) as Object;
+			var o:Object = JSON.parse(result);
 			this.user = o.user;// JSON.decode(o.user) as Object;
-			this.game = JSON.parse(o.game) as Object;
+			this.game = o.game;
           
         }
     }

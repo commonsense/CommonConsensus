@@ -12,7 +12,7 @@ from google.appengine.api import users, memcache
 from webapp2_extras import sessions, jinja2, auth
 from webapp2_extras.auth import InvalidAuthIdError
 from webapp2_extras.auth import InvalidPasswordError
-#import templatetags.jinja_tags as tags
+import tags
 import logging
 
 try:
@@ -99,7 +99,6 @@ class Webapp(webapp2.WSGIApplication):
         """
 
         j = jinja2.Jinja2(app)
-        """
         j.environment.filters.update({
             'active': tags.active,
             'naturaltime': tags.naturaltime,
@@ -109,7 +108,6 @@ class Webapp(webapp2.WSGIApplication):
             'sourcecode': tags.sourcecode,
             'currency': tags.currency,
         })
-        """
         return j
 
     @webapp2.cached_property

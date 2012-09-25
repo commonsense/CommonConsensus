@@ -5,9 +5,9 @@
 </mx:Metadata>
 	<mx:Script>
 		<![CDATA[
-			import mx.events.CollectionEvent;
 			import mx.collections.ArrayCollection;
-		    //import com.adobe.serialization.json.JSON;
+			import mx.events.CollectionEvent;
+			
 			import commonconsensus.events.FlagQuestionEvent;
 			import commonconsensus.util.Settings;
 
@@ -34,11 +34,10 @@
     		import commonconsensus.events.LoginEvent;
 
     		private function submitAnswer():void {
-    			CommonConsensus.debug("user: " +user.toString());
     			if (this.guess.text != "") {	
-        		svnSubmitAnswer.send({user: user.key.toString(), 
-        						  concept: game.concept.toString(),
-        						  relation_type_id: game.relation_type.toString(),
+        		svnSubmitAnswer.send({username: user.username.toString(),
+					              user_key: user.key.toString(),
+        						  game_key: game.key.toString(),
         						  answer: this.guess.text});
        			
         		this.guess.text = "";
@@ -47,7 +46,7 @@
     		
    
     		private function flagQuestion(type:int):void {
-    			svnFlagQuestion.send({problem_type: type, game_started: game.start});
+    			svnFlagQuestion.send({problem_type: type, game_started: game.game_start});
     		}
 
 
@@ -60,17 +59,12 @@
 		    
 		    
 		    private function handleAnswer(event:ResultEvent):void {
-		    	//CommonConsensus.debug("Result in handle answer "+JSON.decode(event.result.toString()));
-		        var result:Object = JSON.parse(event.result.toString());
+				var result:Object = JSON.parse(event.result.toString());
 		        resultArray.removeAll();
-				for each ( var ite:Object in result.scores){
-					resultArray.addItem(Object(ite));
-					trace(ite);
+				for (var answer:String in result.counts) {
+					resultArray.addItem({answer: answer, count: result.counts[answer]});
 				}
-		        peoplePlaying = result.people_playing.toString();
-		        CommonConsensus.debug("game question: "+game.question)
-
-		      
+		        peoplePlaying = result.game.players.toString();		      
 		    }
 		    
 		]]>
@@ -92,7 +86,7 @@
 
     <mx:HTTPService
         id="svnSubmitAnswer"
-        url="{Settings.BASE_URL}/flexserver/relations/"
+        url="{Settings.BASE_URL}/flexserver/process_answer/"
         resultFormat="e4x"
         method="POST"
         result="handleAnswer(event)"/>
@@ -103,28 +97,28 @@
         resultFormat="e4x"
         method="POST"
         result="handleFlagQuestion(event)"/>
-   	 <mx:Form defaultButton="{addButton}" width="600" height="69">
-   
+   	<mx:Form defaultButton="{addButton}" width="600" height="69">
        <mx:HBox width="561">
-       
         <mx:TextInput id="guess" text="" width="497" fontSize="14" color="#006102" fontWeight="bold"/>
-         <mx:Button id="addButton" label="Add" click="submitAnswer()" height="26" width="53"/>
-           
-        </mx:HBox>
-         </mx:Form>
-   	  <mx:Label text="{peoplePlaying}" fontFamily="Georgia" fontSize="12"/>
-       <mx:HBox width="412" height="50" visible="true">
-              <mx:Label text="Flag this question: " fontWeight="bold"/>
-              <mx:Button id="flagButton0" label="It doesn't make sense!" click="flagQuestion(1)" color="#BE0202"/>
-              <mx:Button id="flagButton1" label="It's irrelevant!" click="flagQuestion(2)" width="110" color="#BE0202"/>
+        <mx:Button id="addButton" label="Add" click="submitAnswer()" height="26" width="53"/>    
        </mx:HBox>
-       <mx:DataGrid width="598" height="400" id="resultGrid" dataProvider="{resultArray}" visible="{resultArray.length>0}">
+    </mx:Form>
+	<mx:HBox width="412" height="40" visible="true">
+		<mx:Label text="Players: " fontWeight="bold"/>
+		<mx:Label text="{peoplePlaying}" fontFamily="Georgia" fontSize="12"/>
+	</mx:HBox>
+
+       <mx:DataGrid width="598" height="200" id="resultGrid" dataProvider="{resultArray}" visible="{resultArray.length>0}">
               <mx:columns>
-                     <mx:DataGridColumn headerText="Entry" dataField="answer" width="450"/>
-                     <mx:DataGridColumn headerText="Score" dataField="score"/>
+                     <mx:DataGridColumn headerText="Your Answers" sortable="false" dataField="answer" width="450"/>
+                     <mx:DataGridColumn headerText="Popularity" sortDescending="true" dataField="count"/>
               </mx:columns>
        </mx:DataGrid>
-
+	<mx:HBox width="412" height="40" visible="true">
+		<mx:Label text="Flag this question: " fontWeight="bold"/>
+		<mx:Button id="flagButton0" label="It doesn't make sense!" click="flagQuestion(1)"/>
+		<mx:Button id="flagButton1" label="It's irrelevant!" click="flagQuestion(2)" width="110"/>
+	</mx:HBox>
 
     
 </mx:VBox>

@@ -88,17 +88,17 @@
       <form action="/concept/" method="POST">
       <div class="modal-body">
            <label>Concept Name:</label>
-           <input type="text" name="name">
+           <input type="text" name="name" tabindex="0">
            <label>Concept Types:</label>
-           <select name="concept_types" class="js-concept-type-multi-select" multiple style="width:350px;" tabindex="3">
-            {% for concept_type in concept_types %}
-              <option value="{{concept_type}}">{{concept_type}}</option>
+           <select name="concept_types" class="js-concept-type-multi-select" multiple style="width:350px;" tabindex="0">
+             {% for concept_type in concept_types %}
+             <option value="{{concept_type}}"{% if concept_type == "concept"%} selected{%endif%}>{{concept_type}}</option>
             {% endfor %}
            </select>
       </div>
       <div class="modal-footer">
+          <input type="submit" tabindex="2" name="submit" class="btn btn-primary" value="Add Concept">
           <a href="#" data-dismiss="modal" class="btn">Cancel</a>
-          <input type="submit" name="submit" class="btn btn-primary" value="Add Concept">
       </div>
       </form>
 </div>

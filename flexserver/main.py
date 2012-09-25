@@ -2,6 +2,7 @@ import pickle
 import os
 import string
 import datetime
+import random
 
 from webapp2_flask import *
 from webapp2_extras import sessions
@@ -33,11 +34,34 @@ def get_memcache(key, default=None):
         return default
 
 def get_current_game():
-    game_object = {}
+    """
+    Returns the current game or restarts it
+    """
+    game = get_memcache('current_game')
+    if not game:
+        game = Game.gql("WHERE started_at != NULL ORDER BY started_at DESC LIMIT 1").get()
+        logging.error("results"+str(game))
+
     
-    game_object['concept_key'] = 1
+    if not game or game.duration() > game.GAME_DURATION:
+        # game has expired, start a new one
+        logging.error("CREATING A NEW GAME")
+        game = Game.start_new_game()
+        game.put()
+        memcache.set('current_game', game)
+
+    return game
+
+def get_current_game_object():
+    game = get_current_game()
+    game_object = {}
+    game_object['background_color'] =  game.background_color
+    game_object['key'] = game.key.urlsafe()
+    game_object['players'] = game.players
     game_object['server_time'] = datetime.datetime.now().isoformat()
-    game_object['question'] = "This is a question"
+    game_object['game_start'] = game.started_at.isoformat()
+    game_object['question'] = game.question_string.encode('ascii', 'ignore').replace("<b>","").replace("</b>", "")
+
     return game_object
 
 #==============================================================================
@@ -54,8 +78,10 @@ def admin_list_games(request):
     """
     Lists all of the games that have been played and their answers
     """
-    games = Game.query().fetch()
-    return app.render("admin_list_games.html", request, {'games': games })
+    data = {}
+    data['games'] = Game.query().fetch()
+    data['current_game'] = get_current_game()
+    return app.render("admin_list_games.html", request, data)
 
 @app.route("/game/create", admin=True)
 @app.route("/game/create/", admin=True)
@@ -197,7 +223,23 @@ def add_new_answer(request):
     
     Ancestor path:  game -> user -> answer
     """
-    pass
+    answer = request.POST['answer']
+    user_key = ndb.Key(urlsafe=request.POST['user_key'])
+    username = request.POST['username']
+    game_key = ndb.Key(urlsafe=request.POST['game_key'])
+
+    current_game = get_current_game()
+    if current_game.key != game_key:
+        logging.error("\n\n\n\nMismatching Game Keys!")
+
+    game = game_key.get()
+    game.add_answer(player_name=username, player_key=user_key, answer=answer)
+
+    data = {'game': get_current_game_object()}
+    data.update(game.status(username))
+
+    return app.render_json(data)
+
 
 @app.route("/flexserver/flag_question")
 @app.route("/flexserver/flag_question/")
@@ -209,15 +251,22 @@ def flag_question(request):
     """
     return "implement me"
 
-
-
-@app.route("/flexserver/compute_final_score")
-@app.route("/flexserver/compute_final_score/")
+@app.route("/flexserver/finalscore")
+@app.route("/flexserver/finalscore/")
 def compute_final_score(request):
     """
     Returns the resulting score for all players
     """
-    return "implement me"
+    current_game = get_current_game()
+    game_key = ndb.Key(urlsafe=request.POST['game_key'])
+    player_name = request.POST['username']
+    if current_game.key != game_key:
+        logging.error("\n\n\n\nMismatching Game Keys!")
+
+    data = {'game': get_current_game_object()}
+    data.update(current_game.status(player_name))
+    return app.render_json(data)
+
 
 @app.route("/flexserver/checkup")
 @app.route("/flexserver/checkup/")
@@ -227,19 +276,14 @@ def checkup_game_status(request):
     
     This returns details of the game back 
     """
-    answers = {}
-    for answer in ['blah', 'blahaha', 'shit']:
-        # predicate string =  relation, left concept, right concept
-        predicate = "%s(%s,%s)" % (answer, answer, answer)
-        answers[predicate] = 1
-    
+    player_name = request.POST['username']
+    game = get_current_game()
+    game.add_player(player_name)
+    game_key = ndb.Key(urlsafe=request.POST['game_key'])
+    # TODO: check mismatching game keys
 
-    data = {}
-
-    data['score'] = {'scores': [ {'answer': pred,
-                                  'score': answers[pred]} for pred in answers ],
-                         'people_playing': "is this shown?"}
-
+    data = {'game': get_current_game_object()}
+    data.update(game.status(player_name))
     return app.render_json(data)
 
 
@@ -250,7 +294,7 @@ def create_user_account(request):
     """
     logging.error(request.POST)
     existing_player = Player.query(ndb.AND(Player.username==request.POST['login'],
-                 Player.password==request.POST['password'])).get()
+                      Player.password==request.POST['password'])).get()
     if not existing_player:
         # if the user name is unique
         player = Player(username=request.POST['login'],
@@ -259,7 +303,8 @@ def create_user_account(request):
                         first_name=request.POST['first_name'],
                         last_name=request.POST['last_name'])
         player.put()
-        return app.render_json({'user': player.to_json()})
+        return app.render_json({'user': player.to_json(),
+                                'game': get_current_game_object()})
     else:
         return app.render_json({'error': "User name already exists"})
 
@@ -279,7 +324,7 @@ def login_route(request):
     if player:
         # login successful
         return app.render_json({'user': player.to_json(),
-                                'game': get_current_game()})
+                                'game': get_current_game_object()})
     else:
         return app.render_json({"error": "login failed"})
 

@@ -13,6 +13,7 @@ package commonconsensus.events {
 		
         public function LoginEvent(result:String) {
             super(LOGIN, true);
+			CommonConsensus.debug(result);
 			var o:Object = JSON.parse(result);
             this.user = o.user;// JSON.decode(o.user) as Object;
             this.game = o.game;
