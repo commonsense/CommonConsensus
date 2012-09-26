@@ -3,6 +3,7 @@ import os
 import string
 import datetime
 import random
+import cgi
 
 from webapp2_flask import *
 from webapp2_extras import sessions
@@ -61,17 +62,35 @@ def get_current_game_object():
     game_object['players'] = game.players
     game_object['server_time'] = datetime.datetime.now().strftime(timeformat)
     game_object['game_start'] = game.started_at.strftime(timeformat)
-    game_object['question'] = game.question_string.encode('ascii', 'ignore').replace("<b>","").replace("</b>", "")
+    game_object['question'] = cgi.escape(game.question_string.encode('ascii', 'ignore'))
+    #.replace("<b>","").replace("</b>", "\<\\b\>")
 
     return game_object
 
 #==============================================================================
 #  Admin methods
 #==============================================================================
-@app.route("/admin/")
-@app.route("/admin")
-def admin_base_route(request):
-    return "test"
+@app.route("/players/")
+@app.route("/players")
+def top_players(request):
+    """
+    Shows the top players
+    """
+    players = Player.query().order(-Player.score).fetch()
+    data = {}
+    data['players'] = players
+    return app.render("top_players.html", request, data)
+
+@app.route("/predicates/")
+@app.route("/predicates")
+def top_predicates(request):
+    """
+    Shows the top predicates
+    """
+    predicates = Predicate.query().order(-Predicate.frequency).fetch()
+    data = {}
+    data['predicates'] = predicates
+    return app.render("predicates.html", request, data)
 
 @app.route("/game/")
 @app.route("/game")
@@ -109,8 +128,8 @@ def delete_by_key(request):
     return app.redirect(request.POST['return'])
 
 
-@app.route("/concept/", methods=["GET"], login=True)
-@app.route("/concept", methods=["GET"], login=True)
+@app.route("/concept/", methods=["GET"])
+@app.route("/concept", methods=["GET"])
 def admin_concepts(request):
     """
     PanIf you wanted to [action] a [device], what is the first thing you would do?el to add and edit concepts, concept types, and relation templates.
@@ -135,8 +154,8 @@ def add_concept_type(request, concept_key):
     else:
         return "Concept Not Found"
 
-@app.route("/concept/", methods=["POST"], login=True)
-@app.route("/concept", methods=["POST"], login=True)
+@app.route("/concept/", methods=["POST"])
+@app.route("/concept", methods=["POST"])
 def add_concept(request):
     """
     Adds a concept
@@ -158,8 +177,8 @@ def add_concept(request):
 
     return app.redirect("/concept")
 
-@app.route("/question-template/", methods=["GET"], login=True)
-@app.route("/question-template", methods=["GET"], login=True)
+@app.route("/question-template/", methods=["GET"])
+@app.route("/question-template", methods=["GET"])
 def admin_questions(request):
     """
     Admin page for question templates
@@ -169,8 +188,8 @@ def admin_questions(request):
     data['question_templates'] = QuestionTemplate.query().fetch()
     return app.render("admin_questions.html", request, data)
 
-@app.route("/question-template/", methods=["POST"], login=True)
-@app.route("/question-template", methods=["POST"], login=True)
+@app.route("/question-template/", methods=["POST"])
+@app.route("/question-template", methods=["POST"])
 def add_question_template(request):
     """
     Method to add a question template
@@ -232,7 +251,7 @@ def add_new_answer(request):
     current_game = get_current_game()
     if current_game.key != game_key:
         logging.error("\n\n\n\nMismatching Game Keys!")
-
+        return app.render_json({'game': {'question': "RESTART"}})
     game = game_key.get()
     game.add_answer(player_name=username, player_key=user_key, answer=answer)
 

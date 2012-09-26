@@ -183,6 +183,42 @@ class Answer(ndb.Model):
     player_name = ndb.StringProperty()
     player_key = ndb.KeyProperty(Player, indexed=True)
 
+class Predicate(ndb.Model):
+    """
+    Contains all of the predicates
+    """
+    predicate = ndb.StringProperty(required=True)
+    arguments = ndb.StringProperty(repeated=True)
+    argument_types = ndb.StringProperty(repeated=True)
+    frequency = ndb.IntegerProperty(default=0)
+
+    @classmethod
+    def update_or_create(cls, predicate, arguments, argument_types, frequency=1):
+        """
+        Gets the predicate or adds to the existing one
+        """
+        logging.error("PREDICATE\n\n\n"+str(predicate))
+        logging.error("ARGUMENTS\n\n\n"+str(arguments))
+        p = ndb.gql("""SELECT * FROM Predicate
+                         WHERE predicate = :1
+                         AND argument_types IN :2
+                         AND arguments IN :3""", predicate, argument_types, arguments).get()
+        if not p:
+            p = cls(predicate=predicate,
+                    arguments=arguments,
+                    argument_types=argument_types)
+
+        p.frequency += frequency
+        return p
+        
+
+    def fancy_form(self):
+        """
+        Typed predicate string format
+        """
+        arg_types = ["%s:%s" % (p[0],p[1]) \
+                for p in zip(self.arguments, self.argument_types)]
+        return "%s(%s)" % (self.predicate, ', '.join(arg_types))
 
 class Game(ndb.Model):
     """
@@ -203,6 +239,7 @@ class Game(ndb.Model):
     players = ndb.StringProperty(repeated=True)
     answers = ndb.StructuredProperty(Answer, repeated=True)
     background_color = ndb.IntegerProperty()
+    times_played = ndb.IntegerProperty(default=0)
 
     cached_status = ndb.PickleProperty()
     is_dirty = ndb.BooleanProperty(default=False)
@@ -248,6 +285,8 @@ class Game(ndb.Model):
         new_game.background_color = random.choice(Game.GAME_COLORS) 
         new_game.cached_status = None
         new_game.is_dirty = False
+        new_game.players = []
+        new_game.times_played += 1
         new_game.put()
         memcache.set('current_game', new_game)
         return new_game
@@ -273,7 +312,10 @@ class Game(ndb.Model):
                 answers_by_players = defaultdict(list)
                 # type of answer
                 question = self.question.get()
-                arguments = question.arguments
+                qt = question.question_template.get()
+                arguments = [a.name for a in ndb.get_multi(question.arguments)]
+                argument_types = qt.argument_types
+                predicate = qt.predicate_name
                 answer_type = question.answer_type
 
                 # counts answers
@@ -291,6 +333,11 @@ class Game(ndb.Model):
                         c = Concept(name=answer)
                         c.add_concept_type(answer_type)
                         unsaved.append(c)
+                    p = Predicate.update_or_create(predicate,
+                            arguments + [answer],
+                            argument_types + [answer_type],
+                            count)
+                    unsaved.append(p)
 
                 # computes scores for each player    
                 player_scores = defaultdict(int)
