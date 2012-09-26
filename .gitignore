@@ -3,3 +3,6 @@
 .pyc
 .*~
 .egg
+.__GAE Username (email)
+.__app_name
+.__gae_password
