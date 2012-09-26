@@ -11,7 +11,7 @@ from google.appengine.ext import ndb, webapp
 from google.appengine.api import users, memcache
 from google.appengine.api import channel, mail
 
-from models.player import *
+from models import *
 
 #==============================================================================
 # Configuration
