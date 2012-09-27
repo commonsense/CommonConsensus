@@ -5,9 +5,9 @@ package commonconsensus.util {
 
 		public static const BASE_URL:String = "http://commonconsensus-samsung.appspot.com";
 		
-		public static const AUTHORS:String = "Dustin Smith";
+		public static const AUTHORS:String = "Dustin A. Smith";
 
-		public static const VERSION:String = "2";
+		public static const VERSION:String = "2.1";
 		
 	}
 }

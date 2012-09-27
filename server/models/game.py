@@ -1,6 +1,7 @@
 from google.appengine.ext import ndb
 from google.appengine.api import memcache
 import logging
+
 from .player import Player
 from .question import Question
 
@@ -33,11 +34,12 @@ class Game(ndb.Model):
     players = ndb.StringProperty(repeated=True)
     answers = ndb.StructuredProperty(Answer, repeated=True)
     background_color = ndb.IntegerProperty()
+    times_played = ndb.IntegerProperty(default=0)
 
     cached_status = ndb.PickleProperty()
     is_dirty = ndb.BooleanProperty(default=False)
-    
-    
+
+
 
     @classmethod
     def generate(cls):
@@ -78,6 +80,8 @@ class Game(ndb.Model):
         new_game.background_color = random.choice(Game.GAME_COLORS) 
         new_game.cached_status = None
         new_game.is_dirty = False
+        new_game.players = []
+        new_game.times_played += 1
         new_game.put()
         memcache.set('current_game', new_game)
         return new_game
@@ -103,7 +107,10 @@ class Game(ndb.Model):
                 answers_by_players = defaultdict(list)
                 # type of answer
                 question = self.question.get()
-                arguments = question.arguments
+                qt = question.question_template.get()
+                arguments = [a.name for a in ndb.get_multi(question.arguments)]
+                argument_types = qt.argument_types
+                predicate = qt.predicate_name
                 answer_type = question.answer_type
 
                 # counts answers
@@ -121,6 +128,11 @@ class Game(ndb.Model):
                         c = Concept(name=answer)
                         c.add_concept_type(answer_type)
                         unsaved.append(c)
+                    p = Predicate.update_or_create(predicate,
+                            arguments + [answer],
+                            argument_types + [answer_type],
+                            count)
+                    unsaved.append(p)
 
                 # computes scores for each player    
                 player_scores = defaultdict(int)
@@ -133,10 +145,10 @@ class Game(ndb.Model):
                     p = Player.query(Player.username==player).get()
                     p.score += player_scores[player]
                     unsaved.append(p)
-          
+
                 # save all of these
                 ndb.put_multi(unsaved)
-                
+
                 # store in cached_status
                 self.cached_status = {'player_scores': dict(player_scores),
                                       'counts': dict(counts),
@@ -151,7 +163,7 @@ class Game(ndb.Model):
             for answer in self.answers:
                 counts[answer.answer] += 1
                 answers_by_players[answer.player_name].append(answer.answer)
-        
+
             # store in cached_status
             self.cached_status = {'counts': dict(counts),
                                   'answers_by_players': dict(answers_by_players)}
@@ -215,7 +227,7 @@ class Game(ndb.Model):
             return (datetime.datetime.now() - self.started_at).seconds
         else:
             return 1000000000000
-       
+
     def add_answer(self, player_name, player_key, answer):
         """
         Adds an answer as a child to the game instance
@@ -240,5 +252,3 @@ class Game(ndb.Model):
         self.is_dirty = True
         self.put()
         memcache.set('current_game', self)
-
-

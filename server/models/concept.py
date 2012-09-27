@@ -43,3 +43,41 @@ class Concept(ndb.Model):
         cleaned = concept_type.strip().lower()
         if cleaned not in self.concept_types:
             self.concept_types.append(cleaned)
+
+
+class Predicate(ndb.Model):
+    """
+    Contains all of the predicates
+    """
+    predicate = ndb.StringProperty(required=True)
+    arguments = ndb.StringProperty(repeated=True)
+    argument_types = ndb.StringProperty(repeated=True)
+    frequency = ndb.IntegerProperty(default=0)
+
+    @classmethod
+    def update_or_create(cls, predicate, arguments, argument_types, frequency=1):
+        """
+        Gets the predicate or adds to the existing one
+        """
+        logging.error("PREDICATE\n\n\n"+str(predicate))
+        logging.error("ARGUMENTS\n\n\n"+str(arguments))
+        p = ndb.gql("""SELECT * FROM Predicate
+                         WHERE predicate = :1
+                         AND argument_types IN :2
+                         AND arguments IN :3""", predicate, argument_types, arguments).get()
+        if not p:
+            p = cls(predicate=predicate,
+                    arguments=arguments,
+                    argument_types=argument_types)
+
+        p.frequency += frequency
+        return p
+        
+
+    def fancy_form(self):
+        """
+        Typed predicate string format
+        """
+        arg_types = ["%s:%s" % (p[0],p[1]) \
+                for p in zip(self.arguments, self.argument_types)]
+        return "%s(%s)" % (self.predicate, ', '.join(arg_types))

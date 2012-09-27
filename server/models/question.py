@@ -78,8 +78,6 @@ class QuestionTemplate(ndb.Model):
         templates = cls.query().fetch()
         return templates[random.randint(0, len(templates)-1)]
 
-
-
 class Question(ndb.Model):
     """
     An instance of a grounded question
@@ -113,4 +111,3 @@ class QuestionBlacklist(ndb.Model):
     The questions that users have rejected
     """
     pass
-
