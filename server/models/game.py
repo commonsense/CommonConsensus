@@ -3,6 +3,7 @@ from google.appengine.api import memcache
 import datetime
 import random
 import logging
+from collections import defaultdict
 
 from .player import Player
 from .question import Question, QuestionTemplate
