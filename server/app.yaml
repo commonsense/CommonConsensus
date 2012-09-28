@@ -13,8 +13,8 @@ handlers:
   login: admin
 
 - url: /crossdomain.xml
-  static_files: crossdomain.xml
-  upload: crossdomain.xml
+  static_files: static/crossdomain.xml
+  upload: static/crossdomain.xml
 
 - url: /(favicon\.ico)
   static_files: static/img/\1
