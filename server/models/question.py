@@ -3,6 +3,8 @@ import random
 from google.appengine.ext import ndb
 from google.appengine.api import memcache
 
+from .concept import Concept
+
 class QuestionTemplate(ndb.Model):
     """
     A question is a string along with a series of parameters that
@@ -104,10 +106,3 @@ class Question(ndb.Model):
     def __str__(self):
         return self.question
 
-
-
-class QuestionBlacklist(ndb.Model):
-    """
-    The questions that users have rejected
-    """
-    pass

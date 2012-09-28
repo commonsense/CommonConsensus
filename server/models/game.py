@@ -1,9 +1,18 @@
 from google.appengine.ext import ndb
 from google.appengine.api import memcache
+import datetime
+import random
 import logging
 
 from .player import Player
-from .question import Question
+from .question import Question, QuestionTemplate
+
+
+class GameCreationException(Exception):
+    """
+    A special exception for when a game is created with a bad concept
+    """
+    pass
 
 class Answer(ndb.Model):
     """
