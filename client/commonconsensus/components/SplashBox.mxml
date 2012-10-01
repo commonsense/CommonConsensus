@@ -18,9 +18,9 @@
         <mx:Image source="{Settings.BASE_URL}/img/logo.gif" />
         <mx:Spacer height="10"/>
         <mx:Spacer height="10"/>
-        <mx:Accordion width="600" height="373">
+        <mx:Accordion width="600" height="373" selectedIndex="1">
+			<cc:AccountCreateBox/>
             <cc:LoginBox fontSize="15" color="#000000"/>
-            <cc:AccountCreateBox/>
         </mx:Accordion>      
     </mx:VBox>
     <mx:Text text="Version {Settings.VERSION}  Created by {Settings.AUTHORS},  MIT Media Lab." width="325"/>

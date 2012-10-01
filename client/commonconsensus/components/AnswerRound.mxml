@@ -128,8 +128,9 @@
 
 	    <mx:BarChart id="barChart0"
             type="clustered" fontFamily="Arial" fontSize="22"
-            height="261"
+            height="400"
             width="319.5"
+			visible="{top_user.length>0}"
             showDataTips="true"
 			dataProvider="{this.top_user}" x="441.5" y="103">
 	   		<!--mx:horizontalAxis>

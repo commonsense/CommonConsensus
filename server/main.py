@@ -46,7 +46,6 @@ def get_current_game():
     
     if not game or game.duration() > game.GAME_DURATION:
         # game has expired, start a new one
-        logging.error("CREATING A NEW GAME")
         game = Game.start_new_game()
         game.put()
         memcache.set('current_game', game)
@@ -316,10 +315,11 @@ def create_user_account(request):
     if not existing_player:
         # if the user name is unique
         player = Player(username=request.POST['login'],
-                        password=request.POST['password'],
-                        email=request.POST['email'],
-                        first_name=request.POST['first_name'],
-                        last_name=request.POST['last_name'])
+                        password=request.POST['password'])
+
+        #                email=request.POST['email'],
+        #                first_name=request.POST['first_name'],
+        #                last_name=request.POST['last_name'])
         player.put()
         return app.render_json({'user': player.to_json(),
                                 'game': get_current_game_object()})

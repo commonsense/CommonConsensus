@@ -44,7 +44,7 @@
     		
    
     		private function flagQuestion(type:int):void {
-    			svnFlagQuestion.send({problem_type: type, game_started: game.game_start});
+    			svnFlagQuestion.send({problem_type: type, game_key: game.key, username: user.username});
     		}
 
 
@@ -95,11 +95,13 @@
         resultFormat="e4x"
         method="POST"
         result="handleFlagQuestion(event)"/>
-   	<mx:Form defaultButton="{addButton}" width="600" height="69">
-       <mx:HBox width="561">
+   	<mx:Form width="600" height="80" borderVisible="false" defaultButton="{addButton}" 
+			 horizontalScrollPolicy="off" verticalScrollPolicy="off">
+       <mx:HBox width="600">
         <mx:TextInput id="guess" text="" width="497" fontSize="14" color="#006102" fontWeight="bold"/>
         <mx:Button id="addButton" label="Add" click="submitAnswer()" height="26" width="53"/>    
        </mx:HBox>
+	   <mx:Text color="#767575" text="Enter as many answers as you can in simple English phrases. The more common, the better!"/>
     </mx:Form>
 	<mx:HBox width="412" height="40" visible="true">
 		<mx:Label text="Players: " fontWeight="bold"/>

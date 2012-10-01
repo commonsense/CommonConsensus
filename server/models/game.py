@@ -5,6 +5,7 @@ import random
 import logging
 from collections import defaultdict
 
+from .concept import Predicate
 from .player import Player
 from .question import Question, QuestionTemplate
 

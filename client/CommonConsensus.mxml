@@ -61,7 +61,7 @@
 </mx:Script>
     <mx:VDividedBox width="100%" height="100%"  horizontalScrollPolicy="off" verticalScrollPolicy="off">
         <mx:ViewStack id="mainStack" width="100%" height="100%"  horizontalScrollPolicy="off" verticalScrollPolicy="off">
-            <cc:SplashBox id="splashBox" width="100%"/>
+            <cc:SplashBox id="splashBox" width="100%" borderVisible="true"/>
             <cc:MainBox id="mainBox" user="{_user}" game="{_game}"  horizontalScrollPolicy="off" verticalScrollPolicy="off"/>
         </mx:ViewStack>
         <cc:DebugPanel id="debugPanel" width="100%"

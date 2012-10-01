@@ -60,8 +60,8 @@ class Predicate(ndb.Model):
         """
         Gets the predicate or adds to the existing one
         """
-        logging.error("PREDICATE\n\n\n"+str(predicate))
-        logging.error("ARGUMENTS\n\n\n"+str(arguments))
+        logging.info("PREDICATE\n"+str(predicate))
+        logging.info("ARGUMENTS\n"+str(arguments))
         p = ndb.gql("""SELECT * FROM Predicate
                          WHERE predicate = :1
                          AND argument_types IN :2

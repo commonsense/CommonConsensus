@@ -31,13 +31,14 @@
 		resultFormat="e4x"
         method="POST"
         result="handleAccountLoginResult(event)"/>
+	<mx:Text color="#767575" text="If you do not have an account, click the &quot;Create Account&quot; tab"/>
     <mx:Form labelWidth="150" defaultButton="{loginButton}" height="50%" width="60%" x="0" y="0">
         <mx:FormItem required="true" label="Username">
-            <mx:TextInput id="loginTI" text="test"/>
+            <mx:TextInput id="loginTI" text=""/>
         </mx:FormItem>
         <mx:FormItem required="true" label="Password">
             <mx:TextInput id="passwordTI"
-                displayAsPassword="true" text="test"/>
+                displayAsPassword="true" text=""/>
         </mx:FormItem>
         <mx:FormItem>
             <mx:Button id="loginButton" label="Login"

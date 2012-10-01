@@ -27,7 +27,7 @@
     private function validateAndSubmit():void {
         var results:Array = Validator.validateAll([
             usernameValidator,
-            emailValidator,
+            //emailValidator,
             passwordValidator,
             passwordConfirmationValidator]);
         if (results.length > 0) {
@@ -38,9 +38,9 @@
         }
 
 		svcAccountCreate.send({login: loginTI.text, 
-			email: emailTI.text,
-			first_name: firstNameTI.text,
-			last_name: lastNameTI.text,
+			//email: emailTI.text,
+			//first_name: firstNameTI.text,
+			//last_name: lastNameTI.text,
 			password: passwordTI.text});
 	
     }
@@ -55,8 +55,10 @@
         url="{Settings.BASE_URL}/flexserver/users/"
         method="POST"
         result="handleAccountCreateResult(event)"/>
+	<!--
     <mx:EmailValidator id="emailValidator" source="{emailTI}"
         property="text"/>
+	-->
     <mx:StringValidator
         id="usernameValidator"
         source="{loginTI}"
@@ -81,11 +83,13 @@
         field="login"
         listener="{loginTI}"
         serverErrors="{_serverErrors}"/>
+	<!--
     <cpv:ServerErrorValidator
         id="emailSV"
         field="email"
         listener="{emailTI}"
         serverErrors="{_serverErrors}"/>
+	-->
     <cpv:ServerErrorValidator
         id="passwordSV"
         field="password"
@@ -100,6 +104,7 @@
         <mx:FormItem required="true" label="Username">
             <mx:TextInput id="loginTI"/>
         </mx:FormItem>
+		<!--
         <mx:FormItem required="true" label="Email Address">
             <mx:TextInput id="emailTI"/>
         </mx:FormItem>
@@ -109,6 +114,7 @@
         <mx:FormItem label="Last Name">
             <mx:TextInput id="lastNameTI"/>
         </mx:FormItem>
+		-->
         <mx:FormItem required="true" label="Password">
             <mx:TextInput id="passwordTI"
                 displayAsPassword="true"/>
@@ -117,6 +123,7 @@
             <mx:TextInput id="confirmPasswordTI"
                 displayAsPassword="true"/>
         </mx:FormItem>
+		<!--
         <mx:FormItem>
             <mx:LinkButton label="Read Terms of Service"
                 click="showTOS()"/>
@@ -125,11 +132,14 @@
             <mx:CheckBox id="tosCB"
                 label="I agree to the terms of service"/>
         </mx:FormItem>
+			-->
         <mx:FormItem>
+			<!--
+			toolTip="{tosCB.selected ? '' : 'You must accept the terms of service.'}"
+			enabled="{tosCB.selected}"
+			-->
             <mx:Button id="createAccountButton"
                 label="Create Account"
-                toolTip="{tosCB.selected ? '' : 'You must accept the terms of service.'}"
-                enabled="{tosCB.selected}"
                 click="validateAndSubmit()"/>
         </mx:FormItem>
     </mx:Form>
