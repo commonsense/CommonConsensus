@@ -13,6 +13,7 @@ import gitpass
 USE_DEV = False 
 GAE_USERNAME = gitpass.gitpass("GAE Username (email)", "GAEUsername")
 APP_NAME = gitpass.gitpass("App Name")
+print "APP NAME", APP_NAME
 SDK_PATH = '/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine'
 paths = [SDK_PATH,
          os.path.abspath("../../"),

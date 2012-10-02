@@ -1,15 +1,17 @@
-from models.offline import *
-
+from models.online import *
 from models import *
+
 dirname = os.path.dirname( os.path.realpath(__file__))
 
 ndb.delete_multi(ndb.gql("SELECT __key__ FROM Game").fetch())
+"""
 ndb.delete_multi(ndb.gql("SELECT __key__ FROM Predicate").fetch())
 ndb.delete_multi(ndb.gql("SELECT __key__ FROM Question").fetch())
 ndb.delete_multi(ndb.gql("SELECT __key__ FROM QuestionTemplate").fetch())
 ndb.delete_multi(ndb.gql("SELECT __key__ FROM Concept").fetch())
 ndb.delete_multi(ndb.gql("SELECT __key__ FROM Answer").fetch())
 ndb.delete_multi(ndb.gql("SELECT __key__ FROM Player").fetch())
+"""
 
 # load concepts
 to_add = list()

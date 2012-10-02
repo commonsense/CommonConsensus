@@ -104,7 +104,7 @@ class Game(ndb.Model):
                     # don't play 2x in a row
                     raise GameCreationException("Game played too recently")
                 break
-            except GameCreationException, msg:
+            except Exception as msg:
                 logging.info("Trying to ground another question: %s" % (msg))
 
         return question 
@@ -124,6 +124,9 @@ class Game(ndb.Model):
         self.is_dirty = False
         self.players = []
         self.times_played += 1
+        self.is_banned = False
+        self.flagged_irrelevant = 0
+        self.flagged_nonsense = 0
         self.put()
         logging.error("NEW GAME"+str(self))
         return self

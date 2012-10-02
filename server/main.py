@@ -331,9 +331,9 @@ def checkup_game_status(request):
 
     game_key = ndb.Key(urlsafe=request.POST['game_key'])
     player_name = request.POST['username']
+    current_game = get_current_game()
     game = game_key.get()
     game.add_player(player_name)
-    current_game = get_current_game()
 
     # TODO: check mismatching game keys
     if game.key != current_game.key:
