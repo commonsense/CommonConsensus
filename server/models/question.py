@@ -1,8 +1,8 @@
 import re
 import random
+import logging
 from google.appengine.ext import ndb
 from google.appengine.api import memcache
-
 from .concept import Concept
 
 class QuestionTemplate(ndb.Model):
@@ -97,9 +97,14 @@ class Question(ndb.Model):
         """
         Retrieves the question or creates a new one
         """
-        q = ndb.gql(""" SELECT * FROM Question 
-                        WHERE question_template = :1
-                        AND arguments IN :2""", question_template.key, arguments).get()
+        if len(arguments) > 0:
+            q = ndb.gql(""" SELECT * FROM Question 
+                            WHERE question_template = :1
+                            AND arguments IN :2""", question_template.key, arguments).get()
+        else:
+            # for question templates without any arguments
+            q = ndb.gql(""" SELECT * FROM Question 
+                            WHERE question_template = :1""", question_template.key).get()
                         
         if not q:
             q = cls(question_template=question_template.key,

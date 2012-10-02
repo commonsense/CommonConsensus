@@ -1,7 +1,15 @@
-from models.offline import *
-from models import *
+from models.online import *
 
+from models import *
 dirname = os.path.dirname( os.path.realpath(__file__))
+
+ndb.delete_multi(ndb.gql("SELECT __key__ FROM Predicate").fetch())
+ndb.delete_multi(ndb.gql("SELECT __key__ FROM Question").fetch())
+ndb.delete_multi(ndb.gql("SELECT __key__ FROM QuestionTemplate").fetch())
+ndb.delete_multi(ndb.gql("SELECT __key__ FROM Concept").fetch())
+ndb.delete_multi(ndb.gql("SELECT __key__ FROM Answer").fetch())
+ndb.delete_multi(ndb.gql("SELECT __key__ FROM Game").fetch())
+ndb.delete_multi(ndb.gql("SELECT __key__ FROM Player").fetch())
 
 # load concepts
 to_add = list()
@@ -23,7 +31,7 @@ print "%i concepts loaded " % (n_concepts)
 with open('%s/data/question_templates.csv' % (dirname,), 'r') as f:
     f.next()  # skip header
     for line in f:
-        question, answer_type = line.split(",")
+        question, answer_type = line.strip().split(",")
         
         qt = QuestionTemplate(question=question,
                               answer_type=answer_type)

@@ -5,6 +5,12 @@ import datetime
 import random
 from collections import defaultdict
 
+class GameCreationException(Exception):
+    """
+    A special exception for when a game is created with a bad concept
+    """
+    pass
+
 class Concept(ndb.Model):
     """
     A word/phrase representative of a concept

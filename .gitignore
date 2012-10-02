@@ -1,8 +1,10 @@
 .svn
 .bzr
-.pyc
+*.pyc
+*.swp
 .*~
 .egg
 .__GAE Username (email)
 .__app_name
 .__gae_password
+.__GAEUsername

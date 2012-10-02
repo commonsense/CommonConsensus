@@ -14,60 +14,6 @@ from google.appengine.api import users, memcache
 from google.appengine.api import channel, mail
 from models import *
 
-BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
-
-#The background is set with 40 plus the number of the color, and the foreground with 30
-
-#These are the sequences need to get colored ouput
-RESET_SEQ = "\033[0m"
-COLOR_SEQ = "\033[1;%dm"
-BOLD_SEQ = "\033[1m"
-
-def formatter_message(message, use_color = True):
-    if use_color:
-        message = message.replace("$RESET", RESET_SEQ).replace("$BOLD", BOLD_SEQ)
-    else:
-        message = message.replace("$RESET", "").replace("$BOLD", "")
-    return message
-
-COLORS = {
-    'WARNING': YELLOW,
-    'INFO': WHITE,
-    'DEBUG': BLUE,
-    'CRITICAL': YELLOW,
-    'ERROR': RED
-}
-
-class ColoredFormatter(logging.Formatter):
-    def __init__(self, msg, use_color = True):
-        logging.Formatter.__init__(self, msg)
-        self.use_color = use_color
-
-    def format(self, record):
-        levelname = record.levelname
-        if self.use_color and levelname in COLORS:
-            levelname_color = COLOR_SEQ % (30 + COLORS[levelname]) + levelname + RESET_SEQ
-            record.levelname = levelname_color
-        return logging.Formatter.format(self, record)
-
-
-# Custom logger class with multiple destinations
-class ColoredLogger(logging.Logger):
-    FORMAT = "[$BOLD%(name)-20s$RESET][%(levelname)-18s]  %(message)s ($BOLD%(filename)s$RESET:%(lineno)d)"
-    COLOR_FORMAT = formatter_message(FORMAT, True)
-    def __init__(self, name):
-        logging.Logger.__init__(self, name, logging.DEBUG)                
-
-        color_formatter = ColoredFormatter(self.COLOR_FORMAT)
-
-        console = logging.StreamHandler()
-        console.setFormatter(color_formatter)
-
-        self.addHandler(console)
-        return
-
-logging.setLoggerClass(ColoredLogger)
-
 
 #==============================================================================
 # Configuration
@@ -84,7 +30,7 @@ client = memcache.Client()
 #  Helper functions
 #==============================================================================
 def get_memcache(key, default=None):
-    result = client.get('current_game', namespace="game")
+    result = client.get('current_game')
     if result is not None:
         return result
     else:
@@ -108,9 +54,8 @@ def get_current_game():
             logging.error("resetting game")
             game = Game.start_new_game()
     finally:
+        client.set('current_game', game)
         mutex.release()
-    logging.error("GAME"+str(game))
-    client.set('current_game', game, namespace="game")
     return game
 
 def game_to_object(game):
@@ -304,18 +249,24 @@ def add_new_answer(request):
     """
     answer = request.POST['answer'].strip().lower()
     user_key = ndb.Key(urlsafe=request.POST['user_key'])
-    username = request.POST['username']
+    player_name = request.POST['username']
     game_key = ndb.Key(urlsafe=request.POST['game_key'])
-
-    current_game = get_current_game()
-    if current_game.key != game_key:
-        logging.error("\n\n\n\nMismatching Game Keys!")
-        return app.render_json({'game': {'question': "RESTART"}})
     game = game_key.get()
-    game.add_answer(player_name=username, player_key=user_key, answer=answer)
+    current_game = get_current_game()
 
-    data = {'game': game_to_object(game)}
-    data.update(game.status(username))
+    if current_game.key != game_key:
+        logging.info("Mismatching game keys: old(%s) current(%s)" %\
+                (str(game_key), str(current_game.key)))
+        return app.render_json({'user': {'username': player_name,
+                                         'key': 'undefined'},
+                                'game': game_to_object(get_current_game())})
+    game.add_answer(player_name=player_name, player_key=user_key, answer=answer)
+
+    is_updated, data = game.status(player_name)
+    if is_updated:
+        game.put()
+
+    data.update({'game': game_to_object(game)})
     return app.render_json(data)
 
 
@@ -331,9 +282,10 @@ def flag_question(request):
     username = request.POST['username']
     game = ndb.Key(urlsafe=request.POST['game_key']).get()
     problem_type = int(request.POST['problem_type'])
-    game.flag(problem_type)  # flag game
+    if game.flag(problem_type):  # flag game
+        # changed
+        game.put()
 
-    logging.error("Question flagged")
     return app.redirect("/flexserver/checkup")
 
 
@@ -343,15 +295,24 @@ def compute_final_score(request):
     """
     Returns the resulting score for all players
     """
-    game = get_game()
-    game_key = ndb.Key(urlsafe=request.POST['game_key'])
-    player_name = request.POST['username']
-    if game.key != game_key:
-        logging.error("\n\n\n\nMismatching Game Keys!")
-        return app.render_json({'game': {'question': "RESTART"}})
+    # get the current game
 
-    data = {'game': game_to_object(game)}
-    data.update(game.status(player_name))
+    game_key = ndb.Key(urlsafe=request.POST['game_key'])
+    game = game_key.get()
+    current_game = get_current_game()
+    player_name = request.POST['username']
+    if game.key != current_game.key:
+        logging.info("Mismatching game keys: old(%s) current(%s)" %\
+                (str(game_key), str(current_game.key)))
+        return app.render_json({'user': {'username': player_name,
+                                         'key': 'undefined'},
+                                'game': game_to_object(get_current_game())})
+
+
+    is_updated, data = game.status(player_name, True)
+    if is_updated:
+        game.put()
+    data.update({'game': game_to_object(game)})
     return app.render_json(data)
 
 
@@ -363,17 +324,25 @@ def checkup_game_status(request):
     
     This returns details of the game back 
     """
-    player_name = request.POST['username']
-    game = get_current_game()
-    game.add_player(player_name)
-    game_key = ndb.Key(urlsafe=request.POST['game_key'])
-    # TODO: check mismatching game keys
-    if game.key != game_key:
-        logging.error("\n\n\n\nMismatching Game Keys!")
-        return app.render_json({'game': {'question': "RESTART"}})
 
-    data = {'game': game_to_object(game)}
-    data.update(game.status(player_name))
+    game_key = ndb.Key(urlsafe=request.POST['game_key'])
+    player_name = request.POST['username']
+    game = game_key.get()
+    game.add_player(player_name)
+    current_game = get_current_game()
+
+    # TODO: check mismatching game keys
+    if game.key != current_game.key:
+        logging.info("Mismatching game keys: old(%s) current(%s)" % \
+                (str(game_key), str(current_game.key)))
+        return app.render_json({'user': {'username': player_name,
+                                         'key': 'undefined'},
+                                'game': game_to_object(get_current_game())})
+
+    is_updated, data = game.status(player_name)
+    if is_updated:
+        game.put()
+    data.update({'game': game_to_object(game)})
     return app.render_json(data)
 
 

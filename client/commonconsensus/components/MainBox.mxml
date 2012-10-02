@@ -135,7 +135,7 @@
 			var start:uint = Date.parse(result.game.game_start.toString());
 			var now:uint = Date.parse(result.game.server_time.toString());
 			CommonConsensus.debug("LEFT"+ _timeLeft);			
-			_timeLeft = (start + (GAME_LENGTH*1000) - now) / 1000
+			_timeLeft = (start + (GAME_LENGTH*1000) - now) / 1000;
 			CommonConsensus.debug("RIGHT"+ _timeLeft);
         	var resultArray:ArrayCollection=new ArrayCollection()
 			for (var answer:String in result.counts) {

@@ -4,11 +4,11 @@ import datetime
 import random
 import logging
 from collections import defaultdict
+import copy
 
 from .concept import Predicate, Concept
 from .player import Player
 from .question import Question, QuestionTemplate
-
 
 
 class GameCreationException(Exception):
@@ -92,26 +92,28 @@ class Game(ndb.Model):
         """
         Generates a new game
         """
-        # pick a random question-template
-        question_template = QuestionTemplate.get_random()
 
-        # ground it (attempt 5 times)
-        question_key = None
-        for _ in range(10): 
+        question = None
+        game = None
+        for _ in range(15): 
             try:
+                # pick a random question-template
+                question_template = QuestionTemplate.get_random()
+                # ground it
                 question = question_template.ground()
                 if question.is_banned:
                     raise GameCreationException("Grounded question was banned")
-
+                # find it if it exists
+                game = Game.query(Game.question==question.key).get()
+                if question.duration() < (Game.GAME_DURATION * 3):
+                    raise GameCreationException("Game played too recently")
                 break
-            except GameCreationException as msg:
+            except Exception, msg:
                 logging.info("Trying to ground another question: %s" % (msg))
 
-        # find it if it exists
-        game = Game.query(Game.question==question_key).get()
         if not game:
-            question_string = question_key.get().question
-            game = Game(question=question_key,
+            question_string = question.question
+            game = Game(question=question.key,
                         question_string=question_string)
             game.put()
 
@@ -135,14 +137,14 @@ class Game(ndb.Model):
         logging.error("NEW GAME"+str(new_game))
         return new_game
 
-    def _get_cached_status(self):
+    def _get_cached_status(self, force_answer=False):
         """
         This function computes the score or returns the cache in two ways, depending
         on whether the game is still going on, or if the answers need to be computed
         """
         is_answer_round = Game.GAME_DURATION - self.duration() <= Game.ANSWER_DURATION
         has_updated = False
-        if is_answer_round:
+        if is_answer_round or force_answer:
             # compute if:  non-answer-round cache, or no cache
             if not (self.cached_status and self.cached_status.has_key('player_scores')):
                 """
@@ -198,14 +200,14 @@ class Game(ndb.Model):
                     new_player_scores["%s (%i)" % (player, p.score)] = player_scores[player]
                     unsaved.append(p)
 
-                # save all of these
-                ndb.put_multi(unsaved)
 
                 # store in cached_status
                 self.cached_status = {'player_scores': dict(new_player_scores),
                                       'counts': dict(counts),
                                       'scores':  scores,
                                       'answers_by_players': dict(answers_by_players)}
+                # save all of these
+                ndb.put_multi(unsaved)
 
         elif self.is_dirty or not self.cached_status:
             # compute game-in-progress status
@@ -226,7 +228,7 @@ class Game(ndb.Model):
             self.put()
 
         # ultimately, return status 
-        return has_updated, self.cached_status
+        return has_updated, copy.copy(self.cached_status)
 
     def add_player(self, player_name):
         """
@@ -241,12 +243,12 @@ class Game(ndb.Model):
         return False
 
 
-    def status(self, player_name, force_final=False):
+    def status(self, player_name, force_answer=False):
         """  
         Personalizes the status for the particular player
         """
         self.add_player(player_name)
-        has_changed, status = self._get_cached_status()
+        has_changed, status = self._get_cached_status(force_answer)
         # personalize 
         if 'scores' in status:
             # this is the answer round
