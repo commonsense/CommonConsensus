@@ -16,15 +16,15 @@
 <mx:Script>
 <![CDATA[
     import com.adobe.utils.DateUtil;
+	import mx.controls.Alert;
+    import commonconsensus.events.FlagQuestionEvent;
+    import commonconsensus.util.Settings;
     
     import flash.events.TimerEvent;
     import flash.utils.Timer;
     
     import mx.collections.ArrayCollection;
     import mx.rpc.events.ResultEvent;
-    
-    import commonconsensus.events.FlagQuestionEvent;
-    import commonconsensus.util.Settings;
     	
 	public const SECONDS_FOR_ANSWER:uint = 8;		
 	public const GAME_LENGTH:uint = 35;
@@ -47,6 +47,7 @@
 		questionRoundView.guess.setFocus();
 		setUpNewGame();
 		_timer.addEventListener(TimerEvent.TIMER, updateTimeLeft);
+		//Alert.show("Timer Start");
 		_timer.start();
 	
 	}
@@ -54,7 +55,7 @@
 	
 	public function updateTimeLeft(e:TimerEvent):void {
 		_timeLeft -=1; //decrement counter
-		//CommonConsensus.debug("Update Time Left: "+_timeLeft);
+		CommonConsensus.debug("Update Time Left: "+_timeLeft);
 		if (_timeLeft > SECONDS_FOR_ANSWER) {
 			// question round
 			if (_timeLeft%5 == 0) {
@@ -96,9 +97,11 @@
 			var start:uint = Date.parse(game.game_start.toString());
 			var now:uint = Date.parse(game.server_time.toString());
 			_timeLeft = (start + (GAME_LENGTH*1000) - now) / 1000
+			CommonConsensus.debug("UPDATE TIME LEFT");
         	questionRoundView.resultArray = new ArrayCollection();
       		this.mainViewStack.selectedIndex = 0;
       		questionRoundView.game = game;
+			questionRoundView.flagButtons.visible = true;
       		answerRoundView.question = game.question;
       		questionRoundView.bgColor = game.background_color;
   		}
@@ -114,12 +117,14 @@
 		
         if (new_game.game_start != game.game_start) {
         	// new game starting
+			CommonConsensus.debug("QUESTION NAME"+game.question);
         	if (new_game.question.toString() == "RESTART") {
         		questionRoundView.game.question = "<i>Retrieving next question...</i>";
         		svcCheckup.send({username: user.username.toString(),
 					user_key: user.key.toString(),
 					game_key: game.key.toString()});
         	} else {
+				
         		game = new_game;
         		setUpNewGame();
         	}
@@ -129,13 +134,9 @@
 			// synchronize time left
 			var start:uint = Date.parse(result.game.game_start.toString());
 			var now:uint = Date.parse(result.game.server_time.toString());
-			CommonConsensus.debug("LEFT"+ _timeLeft);
-			
+			CommonConsensus.debug("LEFT"+ _timeLeft);			
 			_timeLeft = (start + (GAME_LENGTH*1000) - now) / 1000
-		
-			CommonConsensus.debug("TIME NOW"+ now);
 			CommonConsensus.debug("RIGHT"+ _timeLeft);
-			CommonConsensus.debug("START"+ start);
         	var resultArray:ArrayCollection=new ArrayCollection()
 			for (var answer:String in result.counts) {
 				resultArray.addItem({answer: answer, count: result.counts[answer]});
@@ -146,10 +147,11 @@
 	
     }
 
+	
 
 	private function handleFlagQuestion(event:FlagQuestionEvent):void {
         var new_game:Object = event.game;
-
+		
         if (new_game.game_start != game.game_start) {
         	this.mainViewStack.selectedIndex=2;
         	// new game starting
@@ -165,8 +167,7 @@
         	}
         } else {
         	// old game, continue with flag
-        	questionRoundView.resultArray = event.score.scores.children();
-        	questionRoundView.peoplePlaying = event.score.people_playing.toString();
+			questionRoundView.flagButtons.visible = false;
         } 
     }
     

@@ -5,9 +5,10 @@ import random
 import logging
 from collections import defaultdict
 
-from .concept import Predicate
+from .concept import Predicate, Concept
 from .player import Player
 from .question import Question, QuestionTemplate
+
 
 
 class GameCreationException(Exception):
@@ -34,7 +35,7 @@ class Game(ndb.Model):
 
     # class variables
     GAME_DURATION = 35
-    ANSWER_DURATION = 11
+    ANSWER_DURATION = 10
     GAME_COLORS =[0x3B5959, 0x7F8CF1, 0xF2F2E9, 0xD9C4B8, 0xBF6363, 0x044E7F, 0x75B809, 0x117820, 0xFFE240]
 
     # model components
@@ -50,7 +51,41 @@ class Game(ndb.Model):
     cached_status = ndb.PickleProperty()
     is_dirty = ndb.BooleanProperty(default=False)
 
+    flagged_irrelevant = ndb.IntegerProperty(default=0)
+    flagged_nonsense = ndb.IntegerProperty(default=0)
+    
+    is_banned = ndb.BooleanProperty(default=False) 
 
+    
+    def flag(self, reason):
+        """
+        Add as a bad question
+
+        1 - Nonsense
+        2 - Irrelevant
+        """
+        if reason == 1:
+            self.flagged_nonsense += 1
+        else:
+            # problem_type = 2
+            self.flagged_irrelevant += 1
+
+        percent_flagged = float(len(self.players)) / self.times_flagged
+        logging.error("%f percent flagged" % (percent_flagged))
+        if percent_flagged > 0.3 and self.duration() < 10:
+            # ban the question
+            question = self.question.get()
+            question.is_banned = True
+            self.is_banned = True
+            ndb.put_multi([self, question])
+            logging.info("Question banned")
+            return True
+        return False
+
+    @property
+    def times_flagged(self):
+        """ Total number of times flagged """
+        return self.flagged_irrelevant + self.flagged_nonsense
 
     @classmethod
     def generate(cls):
@@ -62,12 +97,15 @@ class Game(ndb.Model):
 
         # ground it (attempt 5 times)
         question_key = None
-        for _ in range(5): 
+        for _ in range(10): 
             try:
-                question_key = question_template.ground()
+                question = question_template.ground()
+                if question.is_banned:
+                    raise GameCreationException("Grounded question was banned")
+
                 break
-            except GameCreationException:
-                logging.info("Trying to ground another question")
+            except GameCreationException as msg:
+                logging.info("Trying to ground another question: %s" % (msg))
 
         # find it if it exists
         game = Game.query(Game.question==question_key).get()
@@ -94,7 +132,7 @@ class Game(ndb.Model):
         new_game.players = []
         new_game.times_played += 1
         new_game.put()
-        memcache.set('current_game', new_game)
+        logging.error("NEW GAME"+str(new_game))
         return new_game
 
     def _get_cached_status(self):
@@ -111,7 +149,6 @@ class Game(ndb.Model):
                 Here is where all the results are computed, new concepts are added,
                 and new predicates are created
                 """
-                logging.error("COMPUTING FINAL ANSWERS")
                 has_updated = True
                 unsaved = []   # new records to create 
                 counts = defaultdict(int)
@@ -136,9 +173,11 @@ class Game(ndb.Model):
                     scores[answer] = (count-1) * 2
                     # create concept for scores with more than 1 count
                     if count > 1:
-                        c = Concept(name=answer)
+                        c = Concept.get_or_create(name=answer)
+                        c.add_concept_type("concept")
                         c.add_concept_type(answer_type)
                         unsaved.append(c)
+                    # create a new predicate
                     p = Predicate.update_or_create(predicate,
                             arguments + [answer],
                             argument_types + [answer_type],
@@ -151,17 +190,19 @@ class Game(ndb.Model):
                     player_scores[answer.player_name] += scores[answer.answer]
 
                 # update the players' scores
+                new_player_scores = {}
                 for player in player_scores:
                     # find player and add score
                     p = Player.query(Player.username==player).get()
                     p.score += player_scores[player]
+                    new_player_scores["%s (%i)" % (player, p.score)] = player_scores[player]
                     unsaved.append(p)
 
                 # save all of these
                 ndb.put_multi(unsaved)
 
                 # store in cached_status
-                self.cached_status = {'player_scores': dict(player_scores),
+                self.cached_status = {'player_scores': dict(new_player_scores),
                                       'counts': dict(counts),
                                       'scores':  scores,
                                       'answers_by_players': dict(answers_by_players)}
@@ -183,26 +224,29 @@ class Game(ndb.Model):
             # reset dirty flag and save it
             self.is_dirty = False
             self.put()
-            memcache.set('current_game', self)
 
         # ultimately, return status 
-        return self.cached_status
+        return has_updated, self.cached_status
 
     def add_player(self, player_name):
         """
         Ensures that the player is in the game
+
+        Returns True iff changed
         """
         if not player_name in self.players:
             self.players.append(player_name)
             self.put()
-            memcache.set('current_game', self)
+            return True
+        return False
+
 
     def status(self, player_name, force_final=False):
         """  
         Personalizes the status for the particular player
         """
         self.add_player(player_name)
-        status = self._get_cached_status()
+        has_changed, status = self._get_cached_status()
         # personalize 
         if 'scores' in status:
             # this is the answer round
@@ -228,7 +272,7 @@ class Game(ndb.Model):
             status['counts'] = user_counts
 
         del status['answers_by_players']
-        return status
+        return has_changed, status
 
     def duration(self):
         """
@@ -242,16 +286,12 @@ class Game(ndb.Model):
     def add_answer(self, player_name, player_key, answer):
         """
         Adds an answer as a child to the game instance
-        """
-        """
-        if not self.is_dirty and self.cached_status:
-            if answer in self.cached_status['answers_by_players']:
-                return
-        else:
+
+        Returns True if changed
         """
         for a in self.answers:
             if a.player_key == player_key and a.answer == answer:
-                return
+                return False
 
         if not player_name in self.players:
             self.players.append(player_name)
@@ -262,4 +302,4 @@ class Game(ndb.Model):
         self.answers.append(new_answer)
         self.is_dirty = True
         self.put()
-        memcache.set('current_game', self)
+        return True

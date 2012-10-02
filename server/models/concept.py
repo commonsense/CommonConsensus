@@ -25,6 +25,15 @@ class Concept(ndb.Model):
         return concept_types
 
     @classmethod
+    def get_or_create(cls, name):
+        """
+        """
+        concept = cls.query(cls.name==name).get()
+        if not concept:
+            concept = Concept(name=name)
+        return concept
+
+    @classmethod
     def get_random(cls, concept_type):
         """
         Returns a random concept of a particular type
@@ -60,8 +69,6 @@ class Predicate(ndb.Model):
         """
         Gets the predicate or adds to the existing one
         """
-        logging.info("PREDICATE\n"+str(predicate))
-        logging.info("ARGUMENTS\n"+str(arguments))
         p = ndb.gql("""SELECT * FROM Predicate
                          WHERE predicate = :1
                          AND argument_types IN :2

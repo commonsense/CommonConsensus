@@ -5,11 +5,11 @@
 </mx:Metadata>
 	<mx:Script>
 		<![CDATA[
-			import mx.collections.ArrayCollection;
-			import mx.events.CollectionEvent;
-			
 			import commonconsensus.events.FlagQuestionEvent;
 			import commonconsensus.util.Settings;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.CollectionEvent;
 
 			[Bindable]
 			public var bgColor:uint;
@@ -23,6 +23,7 @@
 			[Bindable]
 			public var timeLeft:int;
 		
+			
 			[Bindable]
 			public var peoplePlaying:String = "";
 			
@@ -51,7 +52,7 @@
 			private function handleFlagQuestion(event:ResultEvent):void {
 		        var result:Object = event.result;
 		        CommonConsensus.debug("Dispatching flag question Event"+ result.toString());
-		        var obj:Object = JSON.parse(result.toString()) as Object;
+		        var obj:Object = JSON.parse(result.toString());
 		        dispatchEvent(new FlagQuestionEvent(obj));
 		    }
 		    
@@ -62,7 +63,7 @@
 				for (var answer:String in result.counts) {
 					resultArray.addItem({answer: answer, count: result.counts[answer]});
 				}
-		        peoplePlaying = result.game.players.toString();		      
+		        peoplePlaying = result.game.players.toString();  
 		    }
 		    
 		]]>
@@ -114,7 +115,7 @@
                      <mx:DataGridColumn headerText="Popularity" sortDescending="true" dataField="count"/>
               </mx:columns>
        </mx:DataGrid>
-	<mx:HBox width="412" height="40" visible="true">
+	<mx:HBox width="412" height="40" id="flagButtons">
 		<mx:Label text="Flag this question: " fontWeight="bold"/>
 		<mx:Button id="flagButton0" label="It doesn't make sense!" click="flagQuestion(1)"/>
 		<mx:Button id="flagButton1" label="It's irrelevant!" click="flagQuestion(2)" width="110"/>

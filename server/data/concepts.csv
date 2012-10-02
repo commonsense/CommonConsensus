@@ -1,0 +1,44 @@
+Name,Types
+app,concept
+bedroom,location
+bluray player,concept
+dvd,"concept, media"
+home,location
+house,location
+kitchen,location
+living room,"concept, location"
+play,action
+power off,concept
+power on,action
+press power button,action
+quiet,"concept, property"
+sleep,action
+switch off,concept
+switch on,concept
+talk,action
+television,concept
+turn down the volume,action
+turn off,"concept, action"
+turn off the power,"concept, action"
+turn on,"concept, action"
+turn up the volume,action
+tv,"concept, object, electronics, consumer electronics, device"
+watch tv,action
+movie,content type
+news,content type
+sports,content type
+documentary,content type
+reality,content type
+kids,content type
+record,action
+download,action
+launch,action
+exit,action
+quit,action
+search,action
+purchase,action
+buy,action
+take picture,action
+chat,action
+call,action
+channel,concept

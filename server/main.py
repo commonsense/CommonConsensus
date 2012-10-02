@@ -4,6 +4,7 @@ import string
 import datetime
 import random
 import cgi
+import logging
 
 from webapp2_flask import *
 from webapp2_extras import sessions
@@ -11,8 +12,62 @@ from webapp2 import Config
 from google.appengine.ext import ndb, webapp
 from google.appengine.api import users, memcache
 from google.appengine.api import channel, mail
-
 from models import *
+
+BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = range(8)
+
+#The background is set with 40 plus the number of the color, and the foreground with 30
+
+#These are the sequences need to get colored ouput
+RESET_SEQ = "\033[0m"
+COLOR_SEQ = "\033[1;%dm"
+BOLD_SEQ = "\033[1m"
+
+def formatter_message(message, use_color = True):
+    if use_color:
+        message = message.replace("$RESET", RESET_SEQ).replace("$BOLD", BOLD_SEQ)
+    else:
+        message = message.replace("$RESET", "").replace("$BOLD", "")
+    return message
+
+COLORS = {
+    'WARNING': YELLOW,
+    'INFO': WHITE,
+    'DEBUG': BLUE,
+    'CRITICAL': YELLOW,
+    'ERROR': RED
+}
+
+class ColoredFormatter(logging.Formatter):
+    def __init__(self, msg, use_color = True):
+        logging.Formatter.__init__(self, msg)
+        self.use_color = use_color
+
+    def format(self, record):
+        levelname = record.levelname
+        if self.use_color and levelname in COLORS:
+            levelname_color = COLOR_SEQ % (30 + COLORS[levelname]) + levelname + RESET_SEQ
+            record.levelname = levelname_color
+        return logging.Formatter.format(self, record)
+
+
+# Custom logger class with multiple destinations
+class ColoredLogger(logging.Logger):
+    FORMAT = "[$BOLD%(name)-20s$RESET][%(levelname)-18s]  %(message)s ($BOLD%(filename)s$RESET:%(lineno)d)"
+    COLOR_FORMAT = formatter_message(FORMAT, True)
+    def __init__(self, name):
+        logging.Logger.__init__(self, name, logging.DEBUG)                
+
+        color_formatter = ColoredFormatter(self.COLOR_FORMAT)
+
+        console = logging.StreamHandler()
+        console.setFormatter(color_formatter)
+
+        self.addHandler(console)
+        return
+
+logging.setLoggerClass(ColoredLogger)
+
 
 #==============================================================================
 # Configuration
@@ -22,13 +77,14 @@ config['webapp2_extras.sessions'] = { 'secret_key': 'chengchangchengchan' }
 config['webapp2_extras.auth'] = { 'user_model': Player}
 
 app= Webapp(debug=True, config=config)
-
+from threading import Thread, Lock
+client = memcache.Client()
 
 #==============================================================================
 #  Helper functions
 #==============================================================================
 def get_memcache(key, default=None):
-    result = memcache.get(key)
+    result = client.get('current_game', namespace="game")
     if result is not None:
         return result
     else:
@@ -38,27 +94,31 @@ def get_current_game():
     """
     Returns the current game or restarts it
     """
-    game = get_memcache('current_game')
-    if not game:
-        game = Game.gql("WHERE started_at != NULL ORDER BY started_at DESC LIMIT 1").get()
-        logging.error("results"+str(game))
-
-    
-    if not game or game.duration() > game.GAME_DURATION:
-        # game has expired, start a new one
-        game = Game.start_new_game()
-        game.put()
-        memcache.set('current_game', game)
-
+    mutex = Lock()
+    mutex.acquire()
+    try:
+        game = get_memcache('current_game')
+        if not game:
+            logging.error("creating game")
+            game = Game.start_new_game()
+        elif game.is_banned:
+            logging.error("game banned, creating new one")
+            game = Game.start_new_game()
+        elif (game.duration() > game.GAME_DURATION):
+            logging.error("resetting game")
+            game = Game.start_new_game()
+    finally:
+        mutex.release()
+    logging.error("GAME"+str(game))
+    client.set('current_game', game, namespace="game")
     return game
 
-def get_current_game_object():
+def game_to_object(game):
     timeformat = "%a %b %d %H:%M:%S %Y"
-    game = get_current_game()
     game_object = {}
     game_object['background_color'] =  game.background_color
     game_object['key'] = game.key.urlsafe()
-    game_object['players'] = game.players
+    game_object['players'] = [str(p) for p in  game.players]
     game_object['server_time'] = datetime.datetime.now().strftime(timeformat)
     game_object['game_start'] = game.started_at.strftime(timeformat)
     game_object['question'] = cgi.escape(game.question_string.encode('ascii', 'ignore'))
@@ -242,7 +302,7 @@ def add_new_answer(request):
     
     Ancestor path:  game -> user -> answer
     """
-    answer = request.POST['answer']
+    answer = request.POST['answer'].strip().lower()
     user_key = ndb.Key(urlsafe=request.POST['user_key'])
     username = request.POST['username']
     game_key = ndb.Key(urlsafe=request.POST['game_key'])
@@ -254,21 +314,28 @@ def add_new_answer(request):
     game = game_key.get()
     game.add_answer(player_name=username, player_key=user_key, answer=answer)
 
-    data = {'game': get_current_game_object()}
+    data = {'game': game_to_object(game)}
     data.update(game.status(username))
-
     return app.render_json(data)
 
 
-@app.route("/flexserver/flag_question")
-@app.route("/flexserver/flag_question/")
+@app.route("/flexserver/flagquestion")
+@app.route("/flexserver/flagquestion/")
 def flag_question(request):
     """
     The request method when a player flags a question as 'nonsensical'
 
     Questions that are flagged enough are added to the black list
+
     """
-    return "implement me"
+    username = request.POST['username']
+    game = ndb.Key(urlsafe=request.POST['game_key']).get()
+    problem_type = int(request.POST['problem_type'])
+    game.flag(problem_type)  # flag game
+
+    logging.error("Question flagged")
+    return app.redirect("/flexserver/checkup")
+
 
 @app.route("/flexserver/finalscore")
 @app.route("/flexserver/finalscore/")
@@ -276,14 +343,15 @@ def compute_final_score(request):
     """
     Returns the resulting score for all players
     """
-    current_game = get_current_game()
+    game = get_game()
     game_key = ndb.Key(urlsafe=request.POST['game_key'])
     player_name = request.POST['username']
-    if current_game.key != game_key:
+    if game.key != game_key:
         logging.error("\n\n\n\nMismatching Game Keys!")
+        return app.render_json({'game': {'question': "RESTART"}})
 
-    data = {'game': get_current_game_object()}
-    data.update(current_game.status(player_name))
+    data = {'game': game_to_object(game)}
+    data.update(game.status(player_name))
     return app.render_json(data)
 
 
@@ -300,8 +368,11 @@ def checkup_game_status(request):
     game.add_player(player_name)
     game_key = ndb.Key(urlsafe=request.POST['game_key'])
     # TODO: check mismatching game keys
+    if game.key != game_key:
+        logging.error("\n\n\n\nMismatching Game Keys!")
+        return app.render_json({'game': {'question': "RESTART"}})
 
-    data = {'game': get_current_game_object()}
+    data = {'game': game_to_object(game)}
     data.update(game.status(player_name))
     return app.render_json(data)
 
@@ -316,13 +387,12 @@ def create_user_account(request):
         # if the user name is unique
         player = Player(username=request.POST['login'],
                         password=request.POST['password'])
-
         #                email=request.POST['email'],
         #                first_name=request.POST['first_name'],
         #                last_name=request.POST['last_name'])
         player.put()
         return app.render_json({'user': player.to_json(),
-                                'game': get_current_game_object()})
+                                'game': game_to_object(get_current_game())})
     else:
         return app.render_json({'error': "User name already exists"})
 
@@ -342,7 +412,7 @@ def login_route(request):
         if player.password == password:
             # login successful
             return app.render_json({'user': player.to_json(),
-                                    'game': get_current_game_object()})
+                                    'game': game_to_object(get_current_game())})
         else:
             return app.render_json({"error": "Bad password"})
     else:

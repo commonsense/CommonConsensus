@@ -19,6 +19,7 @@
           <th>  </th>
           <th> Name </th>
           <th> Times Played </th>
+          <th> Banned<th>
           <th> Seconds since played</th>
   </tr>
 </thead>
@@ -27,6 +28,7 @@
           <td> <input type="checkbox" name="entry" value="{{game.key.urlsafe()}}"> </td>
           <td> {{ game.question_string|safe }} </td>
           <td> {{ game.times_played }} </td>
+          <td> {{ game.is_banned }} </td>
           <td> {{ game.duration() }} </td>
   </tr>
 {% endfor %}

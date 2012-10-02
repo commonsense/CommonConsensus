@@ -10,10 +10,7 @@ package commonconsensus.events {
 		
         public function FlagQuestionEvent(result:Object) {
             super(FLAG_QUESTION, true);
-			CommonConsensus.debug("in flag question event, result[score]"+result.game);
-            this.game = JSON.parse(""+result.game) as Object;
-            CommonConsensus.debug("in flag question event, result[score]"+this.game);
-            this.score = result.score; //JSON.decode(""+result.score) as Object;
+            this.game = result.game;
         }
     }
 }

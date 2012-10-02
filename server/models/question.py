@@ -53,7 +53,8 @@ class QuestionTemplate(ndb.Model):
 
 
     def ground(self):
-        """ Populates the question template with concepts of the types and returns the grounded question string along with a list of the concept objects
+        """ Populates the question template with concepts of the types and 
+        returns the grounded question string along with a list of the concept objects
         """
         grounded_string = self.question[:]
         concepts_list = []
@@ -66,11 +67,11 @@ class QuestionTemplate(ndb.Model):
             argument_value = "<b>%s</b>" % (argument.name,)
             grounded_string = grounded_string.replace(pattern, argument_value, 1) 
         
-        question_key = Question.get_or_create(question=grounded_string,
+        question = Question.get_or_create(question=grounded_string,
                      question_template=self,
                      arguments=concepts_list,
                      answer_type=self.answer_type)
-        return question_key
+        return question
 
     @classmethod
     def get_random(cls):
@@ -89,9 +90,14 @@ class Question(ndb.Model):
     arguments = ndb.KeyProperty(repeated=True)
     answer_type = ndb.StringProperty()
 
+    is_banned = ndb.BooleanProperty(default=False)
+
     @classmethod
     def get_or_create(cls, question_template, question, arguments, answer_type):
-        q = ndb.gql(""" SELECT __key__ FROM Question 
+        """
+        Retrieves the question or creates a new one
+        """
+        q = ndb.gql(""" SELECT * FROM Question 
                         WHERE question_template = :1
                         AND arguments IN :2""", question_template.key, arguments).get()
                         
@@ -100,9 +106,9 @@ class Question(ndb.Model):
                     question=question,
                     arguments=arguments,
                     answer_type=answer_type)
-            return q.put()
+            q.put()
+            return q
         return q
 
     def __str__(self):
         return self.question
-
