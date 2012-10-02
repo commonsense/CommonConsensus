@@ -36,26 +36,25 @@ def get_memcache(key, default=None):
     else:
         return default
 
+#@ndb.transactional
 def get_current_game():
     """
     Returns the current game or restarts it
     """
-    mutex = Lock()
-    mutex.acquire()
-    try:
-        game = get_memcache('current_game')
-        if not game:
-            logging.error("creating game")
-            game = Game.start_new_game()
-        elif game.is_banned:
-            logging.error("game banned, creating new one")
-            game = Game.start_new_game()
-        elif (game.duration() > game.GAME_DURATION):
-            logging.error("resetting game")
-            game = Game.start_new_game()
-    finally:
-        client.set('current_game', game)
-        mutex.release()
+    logging.error("Getting current game")
+    game = ndb.Key('Game','singleton').get()
+    if not game:
+        logging.error("creating game")
+        game = Game(key=ndb.Key('Game', 'singleton'))
+        game.put()
+        game = game.start_new_game()
+    elif game.is_banned:
+        logging.error("game banned, creating new one")
+        game = game.start_new_game()
+    elif (game.duration() > game.GAME_DURATION):
+        logging.error("resetting game")
+        game = game.start_new_game()
+    client.set('current_game', game)
     return game
 
 def game_to_object(game):

@@ -56,7 +56,6 @@ class Game(ndb.Model):
     
     is_banned = ndb.BooleanProperty(default=False) 
 
-    
     def flag(self, reason):
         """
         Add as a bad question
@@ -87,55 +86,47 @@ class Game(ndb.Model):
         """ Total number of times flagged """
         return self.flagged_irrelevant + self.flagged_nonsense
 
-    @classmethod
-    def generate(cls):
+    def generate_question(self):
         """
-        Generates a new game
+        Finds a new question 
         """
-
         question = None
-        game = None
         for _ in range(15): 
             try:
                 # pick a random question-template
                 question_template = QuestionTemplate.get_random()
                 # ground it
                 question = question_template.ground()
+                logging.error("Question gem"+str(question))
                 if question.is_banned:
                     raise GameCreationException("Grounded question was banned")
-                # find it if it exists
-                game = Game.query(Game.question==question.key).get()
-                if game.duration() < (Game.GAME_DURATION * 3):
+                if self.question == question:
+                    # don't play 2x in a row
                     raise GameCreationException("Game played too recently")
                 break
-            except Exception, msg:
+            except GameCreationException, msg:
                 logging.info("Trying to ground another question: %s" % (msg))
 
-        if not game:
-            question_string = question.question
-            game = Game(question=question.key,
-                        question_string=question_string)
-            game.put()
+        return question 
 
-        return game
-
-    @classmethod
-    def start_new_game(cls):
+    def start_new_game(self):
         """
         Starts a new game
         """
-        new_game = cls.generate()
+        question = self.generate_question()
         # reset the game 
-        new_game.started_at = datetime.datetime.now()
-        new_game.answers = []
-        new_game.background_color = random.choice(Game.GAME_COLORS) 
-        new_game.cached_status = None
-        new_game.is_dirty = False
-        new_game.players = []
-        new_game.times_played += 1
-        new_game.put()
-        logging.error("NEW GAME"+str(new_game))
-        return new_game
+        self.question_string = question.question
+        self.question = question.key
+        self.started_at = datetime.datetime.now()
+        self.answers = []
+        self.background_color = random.choice(Game.GAME_COLORS) 
+        self.cached_status = None
+        self.is_dirty = False
+        self.players = []
+        self.times_played += 1
+        self.put()
+        logging.error("NEW GAME"+str(self))
+        return self
 
     def _get_cached_status(self, force_answer=False):
         """

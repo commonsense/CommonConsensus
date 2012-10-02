@@ -102,9 +102,10 @@ class Question(ndb.Model):
                             WHERE question_template = :1
                             AND arguments IN :2""", question_template.key, arguments).get()
         else:
-            # for question templates without any arguments
             q = ndb.gql(""" SELECT * FROM Question 
-                            WHERE question_template = :1""", question_template.key).get()
+                            WHERE question_template = :1""",
+                            question_template.key).get()
+
                         
         if not q:
             q = cls(question_template=question_template.key,
