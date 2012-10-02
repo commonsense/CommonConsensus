@@ -280,7 +280,12 @@ def flag_question(request):
 
     """
     username = request.POST['username']
-    game = ndb.Key(urlsafe=request.POST['game_key']).get()
+    game_key = request.POST.get('game_key', None)
+    if not game_key:
+        logging.error("No Game Key in Request"+str(request.POST))
+        return app.redirect("/flexserver/checkup")
+
+    game = ndb.Key(urlsafe=game_key).get()
     problem_type = int(request.POST['problem_type'])
     if game.flag(problem_type):  # flag game
         # changed

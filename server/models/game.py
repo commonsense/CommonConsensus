@@ -105,7 +105,7 @@ class Game(ndb.Model):
                     raise GameCreationException("Grounded question was banned")
                 # find it if it exists
                 game = Game.query(Game.question==question.key).get()
-                if question.duration() < (Game.GAME_DURATION * 3):
+                if game.duration() < (Game.GAME_DURATION * 3):
                     raise GameCreationException("Game played too recently")
                 break
             except Exception, msg:
