@@ -36,32 +36,35 @@ def get_memcache(key, default=None):
     else:
         return default
 
-#@ndb.transactional
 def get_current_game():
     """
     Returns the current game or restarts it
     """
-    logging.error("Getting current game")
-    game = ndb.Key('Game','singleton').get()
-    if not game:
-        logging.error("creating game")
-        game = Game(key=ndb.Key('Game', 'singleton'))
-        game.put()
-        game = game.start_new_game()
-    elif game.is_banned:
-        logging.error("game banned, creating new one")
-        game = game.start_new_game()
-    elif (game.duration() > game.GAME_DURATION):
-        logging.error("resetting game")
-        game = game.start_new_game()
-    client.set('current_game', game)
+    mutex = Lock()
+    mutex.acquire()
+    try:
+        game = ndb.Key('Game','singleton').get()
+        if not game:
+            logging.error("creating game")
+            game = Game(key=ndb.Key('Game', 'singleton'))
+            game.put()
+            game = game.start_new_game()
+        elif game.is_banned:
+            logging.error("game banned, creating new one")
+            game = game.start_new_game()
+        elif (game.duration() > game.GAME_DURATION):
+            logging.error("resetting game")
+            game = game.start_new_game()
+    finally:
+        client.set('current_game', game)
+        mutex.release()
     return game
 
 def game_to_object(game):
     timeformat = "%a %b %d %H:%M:%S %Y"
     game_object = {}
     game_object['background_color'] =  game.background_color
-    game_object['key'] = game.key.urlsafe()
+    game_object['key'] = game.question.urlsafe()
     game_object['players'] = [str(p) for p in  game.players]
     game_object['server_time'] = datetime.datetime.now().strftime(timeformat)
     game_object['game_start'] = game.started_at.strftime(timeformat)
@@ -249,23 +252,22 @@ def add_new_answer(request):
     answer = request.POST['answer'].strip().lower()
     user_key = ndb.Key(urlsafe=request.POST['user_key'])
     player_name = request.POST['username']
-    game_key = ndb.Key(urlsafe=request.POST['game_key'])
-    game = game_key.get()
     current_game = get_current_game()
+    question_key = ndb.Key(urlsafe=request.POST['game_key'])
 
-    if current_game.key != game_key:
+    if current_game.question != question_key:
         logging.info("Mismatching game keys: old(%s) current(%s)" %\
-                (str(game_key), str(current_game.key)))
+                (str(question_key), str(current_game.question)))
         return app.render_json({'user': {'username': player_name,
                                          'key': 'undefined'},
                                 'game': game_to_object(get_current_game())})
-    game.add_answer(player_name=player_name, player_key=user_key, answer=answer)
+    current_game.add_answer(player_name=player_name, player_key=user_key, answer=answer)
 
-    is_updated, data = game.status(player_name)
+    is_updated, data = current_game.status(player_name)
     if is_updated:
-        game.put()
+        current_game.put()
 
-    data.update({'game': game_to_object(game)})
+    data.update({'game': game_to_object(current_game)})
     return app.render_json(data)
 
 
@@ -279,12 +281,11 @@ def flag_question(request):
 
     """
     username = request.POST['username']
-    game_key = request.POST.get('game_key', None)
-    if not game_key:
+    question_key = request.POST.get('game_key', None)
+    if not question_key:
         logging.error("No Game Key in Request"+str(request.POST))
         return app.redirect("/flexserver/checkup")
-
-    game = ndb.Key(urlsafe=game_key).get()
+    game = get_current_game()
     problem_type = int(request.POST['problem_type'])
     if game.flag(problem_type):  # flag game
         # changed
@@ -301,22 +302,21 @@ def compute_final_score(request):
     """
     # get the current game
 
-    game_key = ndb.Key(urlsafe=request.POST['game_key'])
-    game = game_key.get()
+    question_key = ndb.Key(urlsafe=request.POST['game_key'])
     current_game = get_current_game()
     player_name = request.POST['username']
-    if game.key != current_game.key:
+    if question_key != current_game.question:
         logging.info("Mismatching game keys: old(%s) current(%s)" %\
-                (str(game_key), str(current_game.key)))
+                (str(question_key), str(current_game.key)))
         return app.render_json({'user': {'username': player_name,
                                          'key': 'undefined'},
-                                'game': game_to_object(get_current_game())})
+                                'game': game_to_object(current_game)})
 
 
-    is_updated, data = game.status(player_name, True)
+    is_updated, data = current_game.status(player_name, True)
     if is_updated:
-        game.put()
-    data.update({'game': game_to_object(game)})
+        current_game.put()
+    data.update({'game': game_to_object(current_game)})
     return app.render_json(data)
 
 
@@ -329,19 +329,18 @@ def checkup_game_status(request):
     This returns details of the game back 
     """
 
-    game_key = ndb.Key(urlsafe=request.POST['game_key'])
+    question_key = ndb.Key(urlsafe=request.POST['game_key'])
     player_name = request.POST['username']
-    current_game = get_current_game()
-    game = game_key.get()
+    game = get_current_game()
     game.add_player(player_name)
 
     # TODO: check mismatching game keys
-    if game.key != current_game.key:
+    if game.question!= question_key:
         logging.info("Mismatching game keys: old(%s) current(%s)" % \
-                (str(game_key), str(current_game.key)))
+                (str(game.question), str(question_key)))
         return app.render_json({'user': {'username': player_name,
                                          'key': 'undefined'},
-                                'game': game_to_object(get_current_game())})
+                                'game': game_to_object(game)})
 
     is_updated, data = game.status(player_name)
     if is_updated:

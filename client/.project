@@ -19,7 +19,7 @@
 		<link>
 			<name>bin-debug</name>
 			<type>2</type>
-			<location>/Users/dustin/Documents/Projects/CommonConsensus/flexserver/static</location>
+			<location>/Users/dustin/Documents/Projects/CommonConsensus/server/static</location>
 		</link>
 		<link>
 			<name>bin-release</name>

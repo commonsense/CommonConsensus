@@ -23,5 +23,5 @@
             <cc:LoginBox fontSize="15" color="#000000"/>
         </mx:Accordion>      
     </mx:VBox>
-    <mx:Text text="Version {Settings.VERSION}  Created by {Settings.AUTHORS},  MIT Media Lab." width="325"/>
+    <mx:Text text="Version {Settings.VERSION}  Created by {Settings.AUTHORS},  MIT Media Lab. Compiled for {Settings.BASE_URL}" width="325"/>
 </mx:VBox>

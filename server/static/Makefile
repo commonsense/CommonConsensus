@@ -7,8 +7,8 @@ LICENSE_ARG = #"-license=flexbuilder3,0000000000000000000000"
 
 make: CommonConsensus.mxml commonconsenus/*/*.mxml commonconsenus/**/*.as
 	mxmlc $(LICENSE_ARG) CommonConsensus.mxml -external-library-path=libs/
-	mv CommonConsensus.swf ../flexserver/server/game/
+	mv CommonConsensus.swf ../server/server/game/
 
 debug: CommonConsensus.mxml commonconsenus/*/*.mxml commonconsenus/**/*.as
 	mxmlc $(LICENSE_ARG) -debug=true -external-library-path=libs/ CommonConsensus.mxml
-	mv CommonConsensus.swf ../flexserver/server/game/
+	mv CommonConsensus.swf ../server/server/game/
