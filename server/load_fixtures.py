@@ -1,8 +1,7 @@
-from models.offline import *
 from models import *
+from models.offline import *
 
 dirname = os.path.dirname( os.path.realpath(__file__))
-"""
 ndb.delete_multi(ndb.gql("SELECT __key__ FROM Game").fetch())
 ndb.delete_multi(ndb.gql("SELECT __key__ FROM Predicate").fetch())
 ndb.delete_multi(ndb.gql("SELECT __key__ FROM Question").fetch())
@@ -10,8 +9,9 @@ ndb.delete_multi(ndb.gql("SELECT __key__ FROM QuestionTemplate").fetch())
 ndb.delete_multi(ndb.gql("SELECT __key__ FROM Concept").fetch())
 ndb.delete_multi(ndb.gql("SELECT __key__ FROM Answer").fetch())
 ndb.delete_multi(ndb.gql("SELECT __key__ FROM Player").fetch())
-"""
 # load concepts
+a = ndb.Key('Game', 'singleton')
+
 to_add = list()
 with open('%s/data/concepts.csv' % (dirname,), 'r') as f:
     f.next()  # skip header
@@ -19,7 +19,7 @@ with open('%s/data/concepts.csv' % (dirname,), 'r') as f:
         line = line.replace('"', '').strip()
         items = line.split(",")
         concept, concept_types = items[0], items[1:]
-        c = Concept(name=concept)
+        c = Concept(name=concept, parent=a)
         c.add_concept_type("concept")
         for ct in concept_types:
             c.add_concept_type(ct)
@@ -34,7 +34,8 @@ with open('%s/data/question_templates.csv' % (dirname,), 'r') as f:
         question, answer_type = line.strip().split(",")
         
         qt = QuestionTemplate(question=question,
-                              answer_type=answer_type)
+                              answer_type=answer_type,
+                              parent=a)
         argument_types  = qt.extract_arguments()
         predicate_name = "_".join(argument_types + [answer_type]).replace(" ", "")
 

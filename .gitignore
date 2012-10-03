@@ -3,6 +3,7 @@
 *.pyc
 *.swp
 .*~
+.DS_Store
 .egg
 .__GAE Username (email)
 .__app_name

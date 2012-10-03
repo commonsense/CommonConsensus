@@ -36,6 +36,7 @@ def get_memcache(key, default=None):
     else:
         return default
 
+@ndb.transactional(xg=True)
 def get_current_game():
     """
     Returns the current game or restarts it

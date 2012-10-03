@@ -27,6 +27,7 @@
   <tr>
       <th> </th>
       <th> Question </th>
+      <th> Times Used </th>
       <th> Answer Type </th>
       <th> Predicate </th>
   </tr>
@@ -35,6 +36,7 @@
   <tr>
           <td> <input type="checkbox" name="entry" value="{{template.key.urlsafe()}}"> </td>
           <td> {{ template.question }} </td>
+          <td> {{ template.times_used }} </td>
           <td> {{ template.answer_type }}  </td>
           <td> <code>{{ template.predicate_name }}/{{template.arity()}}</code></td>
   </tr>

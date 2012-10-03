@@ -17,6 +17,7 @@ class QuestionTemplate(ndb.Model):
     argument_types  = ndb.StringProperty(repeated=True)
     answer_type = ndb.StringProperty()
 
+    times_used = ndb.IntegerProperty(default=0)
     created_at = ndb.DateTimeProperty(auto_now_add=True)
 
     def extract_arguments(self):
@@ -78,7 +79,7 @@ class QuestionTemplate(ndb.Model):
         """
         Returns a random question template
         """
-        templates = cls.query().fetch()
+        templates = cls.query(ancestor=ndb.Key('Game', 'singleton')).fetch()
         return templates[random.randint(0, len(templates)-1)]
 
 class Question(ndb.Model):
@@ -90,6 +91,8 @@ class Question(ndb.Model):
     arguments = ndb.KeyProperty(repeated=True)
     answer_type = ndb.StringProperty()
 
+    times_used = ndb.IntegerProperty(default=0)
+
     is_banned = ndb.BooleanProperty(default=False)
 
     @classmethod
@@ -99,11 +102,13 @@ class Question(ndb.Model):
         """
         if len(arguments) > 0:
             q = ndb.gql(""" SELECT * FROM Question 
-                            WHERE question_template = :1
+                            WHERE ANCESTOR IS KEY('Game', 'singleton')
+                            AND question_template = :1
                             AND arguments IN :2""", question_template.key, arguments).get()
         else:
             q = ndb.gql(""" SELECT * FROM Question 
-                            WHERE question_template = :1""",
+                            WHERE ANCESTOR IS KEY('Game', 'singleton')
+                            AND question_template = :1""",
                             question_template.key).get()
 
                         

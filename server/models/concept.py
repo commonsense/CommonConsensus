@@ -34,9 +34,10 @@ class Concept(ndb.Model):
     def get_or_create(cls, name):
         """
         """
-        concept = cls.query(cls.name==name).get()
+        a = ndb.Key('Game', 'singleton')
+        concept = cls.query(cls.name==name, ancestor=a).get()
         if not concept:
-            concept = Concept(name=name)
+            concept = Concept(name=name, parent=a)
         return concept
 
     @classmethod
@@ -44,7 +45,9 @@ class Concept(ndb.Model):
         """
         Returns a random concept of a particular type
         """
-        concepts = cls.query(cls.concept_types==concept_type).fetch()
+        a = ndb.Key('Game', 'singleton')
+        concepts = cls.query(cls.concept_types==concept_type, \
+                ancestor=a).fetch()
         if len(concepts) == 0:
             msg = "ConceptType %s has no members" % (concept_type)
             logging.error(msg)

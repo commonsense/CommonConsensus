@@ -13,7 +13,7 @@ import gitpass
 
 USE_DEV = True 
 GAE_USERNAME = gitpass.gitpass("GAE Username", "GAE Username (email)")
-APP_NAME = gitpass.gitpass("App Name")
+APP_NAME = "commonconsensus-dms" #gitpass.gitpass("App Name")
 SDK_PATH = '/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine'
 paths = [SDK_PATH,
          os.path.abspath("../../"),

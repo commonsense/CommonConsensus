@@ -26,7 +26,6 @@ os.environ['APPLICATION_ID'] =  APP_NAME
 import dev_appserver
 dev_appserver.fix_sys_path() 
 
-from datastore.human import *
 from google.appengine.ext.remote_api import remote_api_stub
 
 os.environ['AUTH_DOMAIN'] = GAE_USERNAME

@@ -88,7 +88,7 @@ class Game(ndb.Model):
 
     def generate_question(self):
         """
-        Finds a new question 
+        Finds a new question  that hasn't been used very often
         """
         question = None
         for _ in range(15): 
@@ -104,7 +104,7 @@ class Game(ndb.Model):
                     # don't play 2x in a row
                     raise GameCreationException("Game played too recently")
                 break
-            except Exception as msg:
+            except GameCreationException as msg:
                 logging.info("Trying to ground another question: %s" % (msg))
 
         return question 
@@ -114,6 +114,10 @@ class Game(ndb.Model):
         Starts a new game
         """
         question = self.generate_question()
+        question_template = question.question_template.get()
+        question.times_used += 1
+        question_template.times_used += 1
+
         # reset the game 
         self.question_string = question.question
         self.question = question.key
@@ -127,8 +131,8 @@ class Game(ndb.Model):
         self.is_banned = False
         self.flagged_irrelevant = 0
         self.flagged_nonsense = 0
-        self.put()
-        logging.error("NEW GAME"+str(self))
+        # save the question and the game
+        ndb.put_multi([self, question, question_template])
         return self
 
     def _get_cached_status(self, force_answer=False):
