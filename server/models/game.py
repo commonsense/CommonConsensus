@@ -71,7 +71,8 @@ class Game(ndb.Model):
 
         percent_flagged = float(len(self.players)) / self.times_flagged
         logging.error("%f percent flagged" % (percent_flagged))
-        if percent_flagged > 0.3 and self.duration() < 10:
+        if self.times_flagged > 1 and percent_flagged > 0.34 and \
+                self.duration() > 1.5 and self.duration() < 10:
             # ban the question
             question = self.question.get()
             question.is_banned = True
@@ -97,7 +98,6 @@ class Game(ndb.Model):
                 question_template = QuestionTemplate.get_random()
                 # ground it
                 question = question_template.ground()
-                logging.error("Question gem"+str(question))
                 if question.is_banned:
                     raise GameCreationException("Grounded question was banned")
                 if self.question == question:

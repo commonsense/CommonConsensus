@@ -20,6 +20,18 @@ class QuestionTemplate(ndb.Model):
     times_used = ndb.IntegerProperty(default=0)
     created_at = ndb.DateTimeProperty(auto_now_add=True)
 
+    @classmethod
+    def reset_all_usage_stats(cls):
+        """
+        Sets all the time_used = 0
+        """
+        to_update = []
+        for q in cls.query().fetch():
+            q.times_used=0
+            to_update.append(q)
+        ndb.put_multi(to_update)
+        return True
+
     def extract_arguments(self):
         """
         Extracts the concept types from the arguments
@@ -67,7 +79,7 @@ class QuestionTemplate(ndb.Model):
             concepts_list.append(argument.key)
             argument_value = "<b>%s</b>" % (argument.name,)
             grounded_string = grounded_string.replace(pattern, argument_value, 1) 
-        
+
         question = Question.get_or_create(question=grounded_string,
                      question_template=self,
                      arguments=concepts_list,
@@ -77,10 +89,15 @@ class QuestionTemplate(ndb.Model):
     @classmethod
     def get_random(cls):
         """
-        Returns a random question template
+        Returns random minimally used template
         """
-        templates = cls.query(ancestor=ndb.Key('Game', 'singleton')).fetch()
+        a = ndb.Key('Game', 'singleton')
+        min_used = cls.query(ancestor=a).order(cls.times_used).get().times_used
+        templates = cls.query(cls.times_used==min_used,
+                ancestor=a).fetch()
         return templates[random.randint(0, len(templates)-1)]
+
+
 
 class Question(ndb.Model):
     """
@@ -94,6 +111,7 @@ class Question(ndb.Model):
     times_used = ndb.IntegerProperty(default=0)
 
     is_banned = ndb.BooleanProperty(default=False)
+
 
     @classmethod
     def get_or_create(cls, question_template, question, arguments, answer_type):

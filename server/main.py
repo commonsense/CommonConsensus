@@ -168,14 +168,11 @@ def add_concept(request):
     Adds a concept
     """
     concept_name = request.POST['name'].lower().strip()
-    existing = ndb.gql("SELECT * FROM Concept WHERE name = :1", concept_name).get()
-    if existing:
-        app.add_message("Concept %s already exists." % (concept_name))
-    elif len(concept_name) < 2:
+    if len(concept_name) < 2:
         app.add_message("Concept name is invalid.")
     else:
         # add the concept
-        new_concept = Concept(name=concept_name)
+        new_concept = Concept.get_or_create(name=concept_name)
         new_concept.add_concept_type("concept")
         for key, val in request.POST.items():
             if key == "concept_types":
@@ -208,7 +205,10 @@ def add_question_template(request):
 
     qt = QuestionTemplate(question=question,
                           predicate_name=predicate_name,
-                          answer_type=answer_type)
+                          answer_type=answer_type,
+                          parent=ndb.Key('Game', 'singleton'))
+
+    QuestionTemplate.reset_all_usage_stats()
     argument_types  = qt.extract_arguments()
     qt.argument_types = argument_types  # store arguments
 

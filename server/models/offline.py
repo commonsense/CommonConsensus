@@ -13,7 +13,6 @@ import gitpass
 
 USE_DEV = True 
 GAE_USERNAME = gitpass.gitpass("GAE Username", "GAE Username (email)")
-APP_NAME = "commonconsensus-dms" #gitpass.gitpass("App Name")
 SDK_PATH = '/Applications/GoogleAppEngineLauncher.app/Contents/Resources/GoogleAppEngine-default.bundle/Contents/Resources/google_appengine'
 paths = [SDK_PATH,
          os.path.abspath("../../"),
@@ -22,13 +21,15 @@ paths = [SDK_PATH,
 for p in paths:
     sys.path.append(p)
 
-os.environ['APPLICATION_ID'] =  APP_NAME
 import dev_appserver
 dev_appserver.fix_sys_path() 
-
-from datastore.human import *
+from google.appengine.api.app_identity import get_application_id
 from google.appengine.ext.remote_api import remote_api_stub
 
+APP_NAME = get_application_id()
+os.environ['APPLICATION_ID'] =  APP_NAME
+
+print "APPNAME", app_name
 os.environ['AUTH_DOMAIN'] = GAE_USERNAME
 os.environ['USER_EMAIL'] = GAE_USERNAME 
 servername = APP_NAME + ".appspot.com" 
