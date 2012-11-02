@@ -89,7 +89,16 @@ class Predicate(ndb.Model):
 
         p.frequency += frequency
         return p
-        
+
+    def to_dict(self):
+        """
+        Returns a dictionary of the predicate
+        """
+        d = {}
+        d['arguments'] = [{'type': t, 'argument': a} for (t,a) in zip(self.arguments, self.argument_types)]
+        d['predicate'] = self.predicate
+        d['count'] = self.frequency
+        return d
 
     def fancy_form(self):
         """

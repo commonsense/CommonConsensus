@@ -187,6 +187,11 @@ class Webapp(webapp2.WSGIApplication):
             json_data = simplejson.dumps(json_data)
         return webapp2.Response(json_data, content_type='application/json', charset='utf-8')
 
+    def render_csv(self, text):
+        """ Renders text """
+        return webapp2.Response(text, content_type='text/csv', charset='utf-8')
+
+
     def render(self, template,  request, context=None):
         """ Default rendering method.  Renders a Jinja2 Template and attaches a
         context to it as well.

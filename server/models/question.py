@@ -46,7 +46,7 @@ class QuestionTemplate(ndb.Model):
         """
         Returns the arity of the predicate 
         """
-        return len(self.argument_types)
+        return len(self.argument_types)+1
 
     def validate(self):
         """

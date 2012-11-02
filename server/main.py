@@ -94,10 +94,36 @@ def top_predicates(request):
     """
     Shows the top predicates
     """
-    predicates = Predicate.query().order(-Predicate.frequency).fetch()
+    predicates = Predicate.query().order(-Predicate.frequency, Predicate.predicate).fetch()
     data = {}
     data['predicates'] = predicates
     return app.render("predicates.html", request, data)
+
+@app.route("/predicates.csv/")
+@app.route("/predicates.csv")
+def top_predicates_csv(request):
+    """
+    Shows the top predicates in CSV
+    """
+    predicates = Predicate.query().order(-Predicate.frequency, Predicate.predicate).fetch()
+    output = []
+    for pred in predicates:
+        arg_and_types = ["%s,%s" % (p[0],p[1]) \
+                                        for p in zip(pred.arguments, pred.argument_types)]
+        output.append("%i,%s,%s" % (pred.frequency, pred.predicate, ','.join(arg_and_types)))
+    return app.render_csv('\n'.join(output))
+
+@app.route("/predicates.json/")
+@app.route("/predicates.json")
+def top_predicates_json(request):
+    """
+    Shows the top predicates in JSON
+    """
+    predicates = Predicate.query().order(-Predicate.frequency, Predicate.predicate).fetch()
+    output = []
+    for pred in predicates:
+        output.append(pred.to_dict())
+    return app.render_json(output)
 
 @app.route("/game/")
 @app.route("/game")
