@@ -95,7 +95,7 @@ class Predicate(ndb.Model):
         Returns a dictionary of the predicate
         """
         d = {}
-        d['arguments'] = [{'type': t, 'argument': a} for (t,a) in zip(self.arguments, self.argument_types)]
+        d['arguments'] = [{'value': v, 'type': t} for (t,v) in zip(self.argument_types, self.arguments)]
         d['predicate'] = self.predicate
         d['count'] = self.frequency
         return d

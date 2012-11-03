@@ -15,7 +15,7 @@
 	
 <mx:Script>
 <![CDATA[
-    import com.adobe.utils.DateUtil;
+//import com.adobe.utils.DateUtil;
 	import mx.controls.Alert;
     import commonconsensus.events.FlagQuestionEvent;
     import commonconsensus.util.Settings;
