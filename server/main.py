@@ -132,12 +132,13 @@ def concepts_csv(request):
     Shows the top concepts in CSV
     """
     concepts = Concept.query().fetch()
+    #concepts = Concept.query().order(Concept.name).fetch()
     output = [','.join(['NAME','TYPE1','TYPE2','TYPE3','...'])]
 
     for c in concepts:
         concept_and_types = [c.name]
         concept_and_types.extend(c.concept_types)
-        output.append(concept_and_types)
+        output.append(','.join(concept_and_types))
     return app.render_csv('\n'.join(output))
 
 @app.route("/concepts.json/")

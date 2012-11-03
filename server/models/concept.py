@@ -68,7 +68,8 @@ class Concept(ndb.Model):
         Returns the Concept Name and its types in the Predicate.to_dict format
         """
         d = {}
-        d['arguments'] = [{'value': v, 'type': 'category'} for v in self.concept_types]
+        d['arguments'] = [{'value': self.name, 'type': 'concept'}]
+        d['arguments'].extend([{'value': v, 'type': 'category'} for v in self.concept_types])
         d['predicate'] = "isa"
         d['count'] = 1
         return d
