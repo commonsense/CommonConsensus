@@ -181,6 +181,7 @@ class Game(ndb.Model):
                     p = Predicate.update_or_create(predicate,
                             arguments + [answer],
                             argument_types + [answer_type],
+                            self.question,
                             count)
                     unsaved.append(p)
 

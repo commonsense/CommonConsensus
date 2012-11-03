@@ -63,6 +63,16 @@ class Concept(ndb.Model):
         if cleaned not in self.concept_types:
             self.concept_types.append(cleaned)
 
+    def to_dict(self):
+        """
+        Returns the Concept Name and its types in the Predicate.to_dict format
+        """
+        d = {}
+        d['arguments'] = [{'value': v, 'type': 'category'} for v in self.concept_types]
+        d['predicate'] = "isa"
+        d['count'] = 1
+        return d
+
 
 class Predicate(ndb.Model):
     """
@@ -72,9 +82,10 @@ class Predicate(ndb.Model):
     arguments = ndb.StringProperty(repeated=True)
     argument_types = ndb.StringProperty(repeated=True)
     frequency = ndb.IntegerProperty(default=0)
+    question_keys = ndb.KeyProperty(repeated=True)
 
     @classmethod
-    def update_or_create(cls, predicate, arguments, argument_types, frequency=1):
+    def update_or_create(cls, predicate, arguments, argument_types, question_key, frequency=1):
         """
         Gets the predicate or adds to the existing one
         """
@@ -86,6 +97,10 @@ class Predicate(ndb.Model):
             p = cls(predicate=predicate,
                     arguments=arguments,
                     argument_types=argument_types)
+
+        # add question key
+        if question_key not in p.question_keys:
+            p.question_keys.append(question_key)
 
         p.frequency += frequency
         return p

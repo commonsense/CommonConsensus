@@ -106,7 +106,7 @@ def top_predicates_csv(request):
     Shows the top predicates in CSV
     """
     predicates = Predicate.query().order(-Predicate.frequency, Predicate.predicate).fetch()
-    output = []
+    output = [','.join(['COUNT','PREDICATE','ARG1','TYPE1','ARG2','TYPE2','ARG3','TYPE3','...'])]
     for pred in predicates:
         arg_and_types = ["%s,%s" % (p[0],p[1]) \
                                         for p in zip(pred.arguments, pred.argument_types)]
@@ -123,6 +123,33 @@ def top_predicates_json(request):
     output = []
     for pred in predicates:
         output.append(pred.to_dict())
+    return app.render_json(output)
+
+@app.route("/concepts.csv/")
+@app.route("/concepts.csv")
+def concepts_csv(request):
+    """
+    Shows the top concepts in CSV
+    """
+    concepts = Concept.query().fetch()
+    output = [','.join(['NAME','TYPE1','TYPE2','TYPE3','...'])]
+
+    for c in concepts:
+        concept_and_types = [c.name]
+        concept_and_types.extend(c.concept_types)
+        output.append(concept_and_types)
+    return app.render_csv('\n'.join(output))
+
+@app.route("/concepts.json/")
+@app.route("/concepts.json")
+def concepts_json(request):
+    """
+    Shows 
+    """
+    concepts = Concept.query().fetch()
+    output = []
+    for c in concepts:
+        output.append(c.to_dict())
     return app.render_json(output)
 
 @app.route("/game/")
